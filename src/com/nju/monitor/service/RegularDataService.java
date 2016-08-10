@@ -1,26 +1,20 @@
 package com.nju.monitor.service;
 
+import com.nju.monitor.daoImpl.*;
+import com.nju.monitor.model.AreaAlertParameter;
+import com.nju.monitor.model.AreaInfo;
+import com.nju.monitor.model.NodeInfo;
+import com.nju.monitor.model.RegularData;
+import com.nju.monitor.util.Variables;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.Resource;
 import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.annotation.Resource;
-
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-
-import com.nju.monitor.daoImpl.AreaAlertParameterDAO;
-import com.nju.monitor.daoImpl.AreaInfoDAO;
-import com.nju.monitor.daoImpl.CtrlerInfoDAO;
-import com.nju.monitor.daoImpl.NodeInfoDAO;
-import com.nju.monitor.daoImpl.RegularDataDAO;
-import com.nju.monitor.model.AreaAlertParameter;
-import com.nju.monitor.model.AreaInfo;
-import com.nju.monitor.model.NodeInfo;
-import com.nju.monitor.model.RegularData;
 
 /*
  * @date 2015-06-27
@@ -103,7 +97,7 @@ public class RegularDataService
 			List<RegularData> nodes = new ArrayList<RegularData>();
 			double tempMedMax = 0.0, tempMedMin = 0.0, tempMedSum = 0.0, tempEnvMax = 0.0, tempEnvMin = 0.0, tempEnvSum = 0.0;
 			double humidityMax = 0.0, humidityMin = 0.0, humiditySum = 0.0;
-			int count = 0;
+			int count = 0, tmCount = 0, teCount = 0, huCount = 0; //use for error data condition;
 			//这里只获取了所有在线节点 2015-11-04修改
 			for (NodeInfo node : nodeInfoDAO.findActiveNodesByAreaNo(area.getAreaNo())) {
 				RegularData data = regularDataDAO.findLatestByNodeNo(node.getNodeNo());
@@ -111,34 +105,53 @@ public class RegularDataService
 					count ++;
 					double tm = data.getTempMed();
 					double te = data.getTempEnv();
-					double h = data.getHumidity();
-					//最小值初始化
-					if(count==1){
-						tempMedMin = tm;
-						tempEnvMin = te;
-                        humidityMin = h;
+					double hu = data.getHumidity();
+
+					if (tm != Variables.ERROR_TMP) {
+						// 最小值初始化
+						if (count == 0) {
+							tempMedMin = tm;
+						}
+						if (tm > tempMedMax) {
+							tempMedMax = tm;
+						}
+						if (tm < tempMedMin) {
+							tempMedMin = tm;
+						}
+						tempMedSum += tm;
+					}else{
+						tmCount--;
 					}
-					if(tm > tempMedMax){
-						tempMedMax = tm;
+
+					if (te != Variables.ERROR_TMP) {
+						if (count == 0) {
+							tempEnvMin = te;
+						}
+						if (te > tempEnvMax) {
+							tempEnvMax = te;
+						}
+						if (te < tempEnvMin) {
+							tempEnvMin = te;
+						}
+						tempEnvSum += te;
+					}else{
+						teCount--;
 					}
-					if(tm < tempMedMin){
-						tempMedMin = tm;
+
+					if (hu != Variables.ERROR_HU) {
+						if (count == 0) {
+							humidityMin = hu;
+						}
+						if (hu > humidityMax) {
+							humidityMax = hu;
+						}
+						if (hu < humidityMin) {
+							humidityMin = hu;
+						}
+						humiditySum += hu;
+					} else {
+						huCount--;
 					}
-					if(te > tempEnvMax){
-						tempEnvMax = te;
-					}
-					if(te < tempEnvMin){
-						tempEnvMin = te;
-					}
-					if(h > humidityMax){
-						humidityMax = h;
-					}
-					if(h < humidityMin){
-						humidityMin = h;
-					}
-					tempMedSum += tm;
-					tempEnvSum += te;
-                    humiditySum += h;
 					
 					data.setStatus(node.getStatus());
 					data.setNodeDesc(node.getNodeDesc());
@@ -147,14 +160,14 @@ public class RegularDataService
 			}
 			areaMap.put("tempMedMax", tempMedMax);
 			areaMap.put("tempMedMin", tempMedMin);
-			areaMap.put("tempMedAvg", (tempMedSum==0) ? 0.0 : df.format(tempMedSum/count));
+			areaMap.put("tempMedAvg", (tempMedSum==0) ? 0.0 : df.format(tempMedSum/(count + tmCount)));
 			areaMap.put("tempEnvMax", tempEnvMax);
 			areaMap.put("tempEnvMin", tempEnvMin);
-			areaMap.put("tempEnvAvg", (tempEnvSum==0) ? 0.0 : df.format(tempEnvSum/count));
+			areaMap.put("tempEnvAvg", (tempEnvSum==0) ? 0.0 : df.format(tempEnvSum/(count + teCount)));
 			
 			areaMap.put("humidityMax", humidityMax);
 			areaMap.put("humidityMin", humidityMin);
-			areaMap.put("humidityAvg", (humiditySum==0) ? 0.0 : df.format(humiditySum/count));
+			areaMap.put("humidityAvg", (humiditySum==0) ? 0.0 : df.format(humiditySum/(count + huCount)));
 			
 			areaMap.put("nodes", nodes);
 						

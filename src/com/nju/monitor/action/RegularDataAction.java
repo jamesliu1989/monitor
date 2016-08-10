@@ -12,6 +12,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.nju.monitor.util.Variables;
 import org.apache.struts2.interceptor.ServletRequestAware;
 import org.apache.struts2.interceptor.ServletResponseAware;
 import org.springframework.context.annotation.Scope;
@@ -68,20 +69,26 @@ public class RegularDataAction extends ActionSupport implements ServletRequestAw
 		for(RegularData regData : regularDatas){
 			long collectTime = regData.getCollectTime().getTime();
 			//介质温度
-			List<Object> objs1 = new ArrayList<Object>();
-			objs1.add(collectTime);
-			objs1.add(regData.getTempMed());
-			tempMedList.add(objs1);
+			if(regData.getTempMed() != Variables.ERROR_TMP) {
+				List<Object> objs1 = new ArrayList<Object>();
+				objs1.add(collectTime);
+				objs1.add(regData.getTempMed());
+				tempMedList.add(objs1);
+			}
 			//环境温度
-			List<Object> objs2 = new ArrayList<Object>();
-			objs2.add(collectTime);
-			objs2.add(regData.getTempEnv());
-			tempEnvList.add(objs2);
+			if(regData.getTempEnv() != Variables.ERROR_TMP) {
+				List<Object> objs2 = new ArrayList<Object>();
+				objs2.add(collectTime);
+				objs2.add(regData.getTempEnv());
+				tempEnvList.add(objs2);
+			}
 			//湿度
-			List<Object> objs8 = new ArrayList<Object>();
-			objs8.add(collectTime);
-			objs8.add(regData.getHumidity());
-			humidityList.add(objs8);
+			if(regData.getHumidity() != Variables.ERROR_HU) {
+				List<Object> objs8 = new ArrayList<Object>();
+				objs8.add(collectTime);
+				objs8.add(regData.getHumidity());
+				humidityList.add(objs8);
+			}
 /*			//烟雾报警
 			List<Object> objs3 = new ArrayList<Object>();
 			objs3.add(collectTime);
@@ -118,35 +125,48 @@ public class RegularDataAction extends ActionSupport implements ServletRequestAw
 			//获取每个节点的曲线数据
 			for(String nodeNo : nodes){
 				areaRegList.add(regularDataService.queryByTime(nodeNo, startTime, endTime));				
-			}	
+			}
 			//生成区域平均温度曲线
-			for(int i=0;i<regularDatas.size();i++){
+			for (int i = 0; i < regularDatas.size(); i++) {
 				//计算区域曲线各点均值
 				double tempMedSum = 0.0, tempEnvSum = 0.0, humiditySum = 0.0;
-				for(List<RegularData> areaReg: areaRegList){
-				 if(i < areaReg.size()){
-				    if(areaReg.get(i) != null){
-					   tempMedSum += areaReg.get(i).getTempMed() != null ? areaReg.get(i).getTempMed() : 0;
-					   tempEnvSum += areaReg.get(i).getTempEnv() != null ? areaReg.get(i).getTempEnv() : 0;
-                       humiditySum += areaReg.get(i).getHumidity() != null ? areaReg.get(i).getHumidity() : 0;
-				    }
+				int tmCount = 0, teCount = 0, huCount = 0;
+				for (List<RegularData> areaReg : areaRegList) {
+					if (i < areaReg.size()) {
+						if (areaReg.get(i) != null) {
+							if(areaReg.get(i).getTempMed() != null && areaReg.get(i).getTempMed() != Variables.ERROR_TMP) {
+								tempMedSum += areaReg.get(i).getTempMed();
+							}else{
+								tmCount--;
+							}
+							if(areaReg.get(i).getTempEnv() != null && areaReg.get(i).getTempEnv() != Variables.ERROR_TMP) {
+								tempEnvSum += areaReg.get(i).getTempEnv();
+							}else {
+								teCount--;
+							}
+							if(areaReg.get(i).getHumidity() != null && areaReg.get(i).getHumidity() != Variables.ERROR_HU) {
+								humiditySum += areaReg.get(i).getHumidity();
+							}else{
+								huCount--;
+							}
+						}
 
-				}					
-			}
+					}
+				}
 				long collectTime = regularDatas.get(i).getCollectTime().getTime();
 				List<Object> objs6 = new ArrayList<Object>();
 				objs6.add(collectTime);
-				objs6.add(Double.parseDouble(df.format(tempMedSum/nodes.size())));
+				objs6.add(Double.parseDouble(df.format(tempMedSum/(nodes.size() + tmCount))));
 				areaTempMedAvgList.add(objs6);
 
 				List<Object> objs7 = new ArrayList<Object>();
 				objs7.add(collectTime);
-				objs7.add(Double.parseDouble(df.format(tempEnvSum/nodes.size())));
+				objs7.add(Double.parseDouble(df.format(tempEnvSum/(nodes.size() + teCount))));
 				areaTempEnvAvgList.add(objs7);
 
 				List<Object> objs9 = new ArrayList<Object>();
 				objs9.add(collectTime);
-				objs9.add(Double.parseDouble(df.format(humiditySum/nodes.size())));
+				objs9.add(Double.parseDouble(df.format(humiditySum/(nodes.size() + huCount))));
 				areaTempEnvAvgList.add(objs9);
 			}
 			dataMap.put("areaTempMedAvg", areaTempMedAvgList);
