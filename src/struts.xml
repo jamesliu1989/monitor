@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+
+	<!-- <constant name="struts.enable.DynamicMethodInvocation" value="false" 
+		/> <constant name="struts.devMode" value="true" /> <package name="default" 
+		namespace="/" extends="struts-default"> <default-action-ref name="index" 
+		/> <global-results> <result name="error">/error.jsp</result> </global-results> 
+		<global-exception-mappings> <exception-mapping exception="java.lang.Exception" 
+		result="error"/> </global-exception-mappings> <action name="index"> <result 
+		name="success" type="redirectAction">/api.jsp</result> </action> </package> -->
+
+	<!-- Add packages here -->
+
+	<constant name="struts.i18n.encoding" value="UTF-8" />
+	
+	<package name="default" namespace="/" extends="struts-default">
+	
+ 	    <!-- 定义自定义拦截器  -->
+ 	    <interceptors>
+	          <interceptor name="loginCheck" class="com.nju.monitor.interceptor.LoginCheck"/>
+	          <interceptor-stack name="loginCheckStack">
+	              <interceptor-ref name="defaultStack"/>
+	              <interceptor-ref name="loginCheck"/>
+	          </interceptor-stack>
+	    </interceptors>
+	    <!--  将自定义拦截器，设为默认拦截器  -->
+	    <default-interceptor-ref name="loginCheckStack"/>  
+
+ 
+	   <!-- 全局result -->
+	   <global-results>	      
+	        <!-- 未登陆提示 -->
+	      <result name="loginError">login.jsp</result>
+	        <!-- 其他提示 -->
+	      <result name="errorPage">error.jsp</result>
+	   </global-results>
+	   
+		<action name="userAction_*" class="com.nju.monitor.action.UserAction"
+			method="{1}">
+			<result name="SUCCESS">index.jsp</result>
+			<result name="FAIL">login.jsp</result>
+			<result name="LOGOUT">login.jsp</result>
+			<result name="USERVIEW">userView.jsp</result>			
+		</action>
+		<action name="reportAction_*" class="com.nju.monitor.action.ReportAction" method="{1}">
+			<result name="nodeDailyReport">nodeDailyReport.jsp</result>
+			<result name="areaDailyReport">areaDailyReport.jsp</result>	
+			<result name="nodeMonthReport">nodeMonthReport.jsp</result>
+			<result name="areaMonthReport">areaMonthReport.jsp</result>		
+		</action>
+		<action name="areaAction_*" class="com.nju.monitor.action.AreaAction" method="{1}">
+		    <result name="areaPrmConfig">areaPrmConfig.jsp</result>
+		</action>
+		<action name="alertAction_*" class="com.nju.monitor.action.AlertAction" method="{1}">
+		    <result name="alertView">alertView.jsp</result>
+		</action>
+		<action name="smsAction_*" class="com.nju.monitor.action.SmsAction" method="{1}">
+		    <result name="info">smsService.jsp</result>
+		    <result name="history">smsHistory.jsp</result>
+		</action>
+	</package>
+		
+	<package name="json" namespace="/json" extends="json-default">
+   
+		<action name="areaAction_*" class="com.nju.monitor.action.AreaAction"
+			method="{1}">
+		    <result name="JSON" type="json">
+			   <param name="root">dataList</param>
+		    </result>
+		    <result name="JSON2" type="json">
+			   <param name="root">dataMap</param>
+		    </result>
+		    <result name="JSON3" type="json">
+			   <param name="root">result</param>
+		    </result>
+		</action>
+		<action name="nodeAction_*" class="com.nju.monitor.action.NodeAction"
+			method="{1}">
+		    <result name="JSON1" type="json">
+			   <param name="root">result</param>
+		    </result>
+		    <result name="JSON2" type="json">
+			   <param name="root">dataList</param>
+		    </result>
+		    <result name="JSON3" type="json">
+			   <param name="root">dataMap</param>
+		    </result>
+		</action>
+		<action name="regularDataAction_*" class="com.nju.monitor.action.RegularDataAction"
+			method="{1}">
+		    <result name="JSON1" type="json">
+			   <param name="root">result</param>
+		    </result>
+		    <result name="JSON2" type="json">
+			   <param name="root">dataList</param>
+		    </result>
+		    <result name="JSON3" type="json">
+			   <param name="root">dataMap</param>
+		    </result>
+		</action>
+		<action name="alertAction_*" class="com.nju.monitor.action.AlertAction"
+			method="{1}">
+		    <result name="JSON1" type="json">
+			   <param name="root">result</param>
+		    </result>
+		    <result name="JSON2" type="json">
+			   <param name="root">dataList</param>
+		    </result>
+		    <result name="JSON3" type="json">
+			   <param name="root">dataMap</param>
+		    </result>
+		</action>
+		<action name="smsAction_*" class="com.nju.monitor.action.SmsAction"
+			method="{1}">
+		    <result name="JSON1" type="json">
+			   <param name="root">result</param>
+		    </result>
+		    <result name="JSON2" type="json">
+			   <param name="root">dataList</param>
+		    </result>
+		    <result name="JSON3" type="json">
+			   <param name="root">dataMap</param>
+		    </result>
+		</action>
+		<action name="systemAction_*" class="com.nju.monitor.action.SystemAction"
+			method="{1}">
+		    <result name="JSON1" type="json">
+			   <param name="root">result</param>
+		    </result>
+		    <result name="JSON2" type="json">
+			   <param name="root">dataMap</param>
+		    </result>
+		</action>
+	</package>
+</struts>

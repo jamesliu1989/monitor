@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+	                    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
+                        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
+                        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd">
+
+	<context:annotation-config />
+	<context:component-scan base-package="com.nju.monitor.*" />
+        
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="jdbc:mysql://127.0.0.1:3306/monitor?useUnicode=true&amp;characterEncoding=UTF-8&amp;autoReconnect=true" />
+		<property name="username" value="root" />
+		<property name="password" value="root" />
+	</bean>
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.connection.release_mode">after_transaction</prop>
+				<prop key="hibernate.connection.pool_size">3</prop>
+				<prop key="hibernate.show_sql">false</prop>
+				<prop key="hibernate.format_sql">true</prop>
+				<prop key="hibernate.hbm2ddl.auto">none</prop>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+				<prop key="hibernate.cache.provider_class">org.hibernate.cache.internal.NoCacheProvider</prop>
+				<prop key="javax.persistence.validation.mode">none</prop>
+			</props>
+		</property>
+		<property name="packagesToScan">
+			<list>
+				<value>com.nju.monitor.model</value>
+			</list>
+		</property>
+   </bean>
+    <!-- <tx:annotation-driven transaction-manager="txManager"/> -->
+	<bean id="txManager"
+		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	<aop:config>
+	    <aop:pointcut id="bussinessService" expression="execution(public * com.nju.monitor.service..*.*(..))" />
+	    <aop:advisor pointcut-ref="bussinessService" advice-ref="txAdvice"/>
+	</aop:config>
+  	<tx:advice id="txAdvice" transaction-manager="txManager">  
+        <tx:attributes>  
+            <tx:method name="save*" propagation="REQUIRED" />  
+            <tx:method name="create*" propagation="REQUIRED" />  
+            <tx:method name="insert*" propagation="REQUIRED" />  
+            <tx:method name="update*" propagation="REQUIRED" /> 
+            <tx:method name="active*" propagation="REQUIRED" /> 
+            <tx:method name="delete*" propagation="REQUIRED" /> 
+            <tx:method name="get*" propagation="REQUIRED" read-only="true" />  
+            <tx:method name="count*" propagation="REQUIRED" read-only="true" />  
+            <tx:method name="find*" propagation="REQUIRED" read-only="true" />  
+            <tx:method name="query*" propagation="REQUIRED" read-only="true" /> 
+            <tx:method name="*" read-only="true" /> 
+        </tx:attributes>  
+    </tx:advice> 
+    
+    <!-- 管理员 aop  -->
+	<bean id="adminLogAOP" class="com.nju.monitor.aop.AdminAOP">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	<aop:config>
+       <aop:aspect id="loginAOP" ref="adminLogAOP">  
+            <aop:pointcut id="login" expression="execution(* com.nju.monitor.service.AdminLoginService.getAdmin(..))" />   
+            <aop:after  pointcut-ref="login" method="loginSuccess"/>  
+       </aop:aspect> 
+       <aop:aspect id="exitAOP" ref="adminLogAOP">  
+            <aop:pointcut id="exit" expression="execution(* com.nju.monitor.service.AdminLoginService.exit(..))" />   
+            <aop:after  pointcut-ref="exit" method="exitSuccess"/>  
+       </aop:aspect> 
+    </aop:config> 
+     
+</beans>
