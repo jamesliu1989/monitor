@@ -167,7 +167,7 @@ public class RegularDataAction extends ActionSupport implements ServletRequestAw
 				List<Object> objs9 = new ArrayList<Object>();
 				objs9.add(collectTime);
 				objs9.add(Double.parseDouble(df.format(humiditySum/(nodes.size() + huCount))));
-				areaTempEnvAvgList.add(objs9);
+				areaHumidityAvgList.add(objs9);
 			}
 			dataMap.put("areaTempMedAvg", areaTempMedAvgList);
 			dataMap.put("areaTempEnvAvg", areaTempEnvAvgList);

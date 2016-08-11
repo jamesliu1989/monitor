@@ -507,8 +507,8 @@
                     title: {
                         text: '温度(℃)'
                     },
-                    min: -40,
-                    max: 130,
+//                    min: -40,
+//                    max: 130,
                     opposite: false,
                     labels: {
                         formatter: function () {

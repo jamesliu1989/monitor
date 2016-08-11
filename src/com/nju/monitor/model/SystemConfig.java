@@ -32,6 +32,8 @@ public class SystemConfig implements java.io.Serializable {
 	private Boolean showTempEnv;
 	private Boolean showHumidity;
 	private Boolean showSmogAlert;
+	private Boolean smsAlert;
+
 
 	// Constructors
 
@@ -137,5 +139,14 @@ public class SystemConfig implements java.io.Serializable {
 
 	public void setShowSmogAlert(Boolean showSmogAlert) {
 		this.showSmogAlert = showSmogAlert;
+	}
+
+	@Column(name = "SMS_ALERT")
+	public Boolean getSmsAlert() {
+		return smsAlert;
+	}
+
+	public void setSmsAlert(Boolean smsAlert) {
+		this.smsAlert = smsAlert;
 	}
 }

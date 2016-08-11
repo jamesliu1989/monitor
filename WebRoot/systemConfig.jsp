@@ -218,6 +218,10 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 											<label class="checkbox inline">
 												<input type="checkbox" value="" id="showSmogAlert"> 烟雾报警
 											</label>
+
+											<label class="checkbox inline">
+												<input type="checkbox" value="" id="smsAlert"> 短信报警发送
+											</label>
 										</div>
 			                         </div>
 								</div>
@@ -287,6 +291,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			var showTempEnv = $('#showTempEnv').is(':checked');
 			var showHumidity = $('#showHumidity').is(':checked');
 			var showSmogAlert = $('#showSmogAlert').is(':checked');
+			var smsAlert = $('#smsAlert').is(':checked');
 
 			if(comPort == '-1'){
 				alert("请选择端口号!");
@@ -313,7 +318,8 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 					 'config.showTempMed':showTempMed,
 					 'config.showTempEnv':showTempEnv,
 	    		     'config.showHumidity':showHumidity,
-					 'config.showSmogAlert':showSmogAlert
+					 'config.showSmogAlert':showSmogAlert,
+					 'config.smsAlert':smsAlert
 	    		     },
 	        function(data){
 	    		if(data){
@@ -335,6 +341,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	    			$('#collectCycle').val(config.collectCycle);	  
 	    			$('#smsComPort').val(config.smsComPort);
 	    			$('#smsBaudRate').val(config.smsBaudRate);
+					$('#smsAlert').val(config.smsAlert);
 					if(config.showHumidity == 1){
 						$('#showTempMed').attr('checked', true);
 						$('#showTempMed').parents('.checkbox').find('span').addClass('checked');
@@ -350,6 +357,10 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 					if(config.showHumidity == 1){
 						$('#showSmogAlert').attr('checked', true);
 						$('#showSmogAlert').parents('.checkbox').find('span').addClass('checked');
+					}
+					if(config.smsAlert == 1){
+						$('#smsAlert').attr('checked', true);
+						$('#smsAlert').parents('.checkbox').find('span').addClass('checked');
 					}
 	    			
 	    		}

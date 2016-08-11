@@ -73,7 +73,7 @@ public class SystemDAO{
 	public int update(SystemConfig config){
 		log.debug("update SystemConfig");
 		try {
-			String hql = "update SystemConfig set comPort = ?, baudRate = ?, collectCycle = ?, smsComPort = ?, smsBaudRate = ?, showTempMed = ?, showTempEnv = ?, showHumidity = ?, showSmogAlert = ? where id = 1";
+			String hql = "update SystemConfig set comPort = ?, baudRate = ?, collectCycle = ?, smsComPort = ?, smsBaudRate = ?, showTempMed = ?, showTempEnv = ?, showHumidity = ?, showSmogAlert = ?, smsAlert = ? where id = 1";
 			return sessionFactory.getCurrentSession().createQuery(hql)
 					      .setString(0, config.getComPort())
 			              .setString(1, config.getBaudRate())
@@ -84,6 +84,7 @@ public class SystemDAO{
 					      .setBoolean(6, config.getShowTempEnv())
 			              .setBoolean(7, config.getShowHumidity())
 					      .setBoolean(8, config.getShowSmogAlert())
+					      .setBoolean(9, config.getSmsAlert())
 			              .executeUpdate();
 		} catch (Exception re) {
 			log.error("update failed", re);

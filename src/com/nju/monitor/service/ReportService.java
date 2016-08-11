@@ -10,6 +10,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import com.nju.monitor.util.Variables;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -61,39 +62,58 @@ public class ReportService
         	List<RegularData> dataList = regularDataDAO.findByTime(nodeNo, startTime, endTime);
             List<NodeInfo> nodeInfos = nodeInfoDAO.findByNodeNo(nodeNo);           
 			double tempMedMax = 0.0, tempMedMin = 0.0, tempMedSum = 0.0, tempEnvMax = 0.0, tempEnvMin = 0.0, tempEnvSum = 0.0, humidityMax = 0.0, humidityMin = 0.0, humiditySum = 0.0;
-			int count = 0;
+			int count = 0, tmCount = 0, teCount = 0, huCount = 0; //use for error data condition;;
 			for (RegularData data : dataList) {
 				if(data != null){					
 					double tm = data.getTempMed();
 					double te = data.getTempEnv(); 
 					double hu = data.getHumidity();
-					//最小值初始化
-					if(count==0){
-						tempMedMin = tm;
-						tempEnvMin = te;
-						humidityMin = hu;
+
+					if (tm != Variables.ERROR_TMP) {
+						// 最小值初始化
+						if (count == 0) {
+							tempMedMin = tm;
+						}
+						if (tm > tempMedMax) {
+							tempMedMax = tm;
+						}
+						if (tm < tempMedMin) {
+							tempMedMin = tm;
+						}
+						tempMedSum += tm;
+					}else{
+						tmCount--;
 					}
-					if(tm > tempMedMax){
-						tempMedMax = tm;
+
+					if (te != Variables.ERROR_TMP) {
+						if (count == 0) {
+							tempEnvMin = te;
+						}
+						if (te > tempEnvMax) {
+							tempEnvMax = te;
+						}
+						if (te < tempEnvMin) {
+							tempEnvMin = te;
+						}
+						tempEnvSum += te;
+					}else{
+						teCount--;
 					}
-					if(tm < tempMedMin){
-						tempMedMin = tm;
+
+					if (hu != Variables.ERROR_HU) {
+						if (count == 0) {
+							humidityMin = hu;
+						}
+						if (hu > humidityMax) {
+							humidityMax = hu;
+						}
+						if (hu < humidityMin) {
+							humidityMin = hu;
+						}
+						humiditySum += hu;
+					} else {
+						huCount--;
 					}
-					if(te > tempEnvMax){
-						tempEnvMax = te;
-					}
-					if(te < tempEnvMin){
-						tempEnvMin = te;
-					}
-					if(hu > humidityMax){
-						humidityMax = hu;
-					}
-					if(hu < humidityMin){
-						humidityMin = hu;
-					}
-					tempMedSum += tm;
-					tempEnvSum += te;
-					humiditySum += hu;
 					
 					if(data.getSmogAlert() == 0){
 						reportDailyNode.setSmogAlert(0);
@@ -117,13 +137,13 @@ public class ReportService
 			reportDailyNode.setNodeNo(nodeNo);
 			reportDailyNode.setTempMedMax(tempMedMax);
 			reportDailyNode.setTempMedMin(tempMedMin);
-			reportDailyNode.setTempMedAvg((tempMedSum==0) ? 0.0 : Double.parseDouble(df.format(tempMedSum/count)));
+			reportDailyNode.setTempMedAvg((tempMedSum==0) ? 0.0 : Double.parseDouble(df.format(tempMedSum/(count + tmCount))));
 			reportDailyNode.setTempEnvMax(tempEnvMax);
 			reportDailyNode.setTempEnvMin(tempEnvMin);
-			reportDailyNode.setTempEnvAvg((tempEnvSum==0) ? 0.0 : Double.parseDouble(df.format(tempEnvSum/count)));
+			reportDailyNode.setTempEnvAvg((tempEnvSum==0) ? 0.0 : Double.parseDouble(df.format(tempEnvSum/(count + teCount))));
 			reportDailyNode.setHumidityMax(humidityMax);
 			reportDailyNode.setHumidityMin(humidityMin);
-			reportDailyNode.setHumidityAvg((humiditySum==0) ? 0.0 : Double.parseDouble(df.format(humiditySum/count)));
+			reportDailyNode.setHumidityAvg((humiditySum==0) ? 0.0 : Double.parseDouble(df.format(humiditySum/(count + huCount))));
 			reportDailyNode.setTempDevAbs(Double.parseDouble(df.format(Math.abs(reportDailyNode.getTempMedAvg()-reportDailyNode.getTempEnvAvg()))));
 			reportDailyNode.setDayOfYear(today);
 			reportDailyNode.setMonthOfYear(today.substring(0, 7));
@@ -160,7 +180,7 @@ public class ReportService
 			}
         	List<NodeInfo> nodeList = nodeInfoDAO.findActiveNodeByArea(areaNo);    
 			double tempMedMax = 0.0, tempMedMin = 0.0, tempMedSum = 0.0, tempEnvMax = 0.0, tempEnvMin = 0.0, tempEnvSum = 0.0, humidityMax = 0.0, humidityMin = 0.0, humiditySum = 0.0;
-			int count = 0;
+			int count = 0, tmCount = 0, teCount = 0, huCount = 0; //use for error data condition;;;
 			double batteryVol = 0.0;
 			int wirelessSig = 0;
 		for(NodeInfo node: nodeList){
@@ -170,33 +190,52 @@ public class ReportService
 					double tm = data.getTempMed();
 					double te = data.getTempEnv();
 					double hu = data.getHumidity();
-					//最小值初始化
-					if(count==0){
-						tempMedMin = tm;
-						tempEnvMin = te;
-						humidityMin = hu;
+
+					if (tm != Variables.ERROR_TMP) {
+						// 最小值初始化
+						if (count == 0) {
+							tempMedMin = tm;
+						}
+						if (tm > tempMedMax) {
+							tempMedMax = tm;
+						}
+						if (tm < tempMedMin) {
+							tempMedMin = tm;
+						}
+						tempMedSum += tm;
+					}else{
+						tmCount--;
 					}
-					if(tm > tempMedMax){
-						tempMedMax = tm;
+
+					if (te != Variables.ERROR_TMP) {
+						if (count == 0) {
+							tempEnvMin = te;
+						}
+						if (te > tempEnvMax) {
+							tempEnvMax = te;
+						}
+						if (te < tempEnvMin) {
+							tempEnvMin = te;
+						}
+						tempEnvSum += te;
+					}else{
+						teCount--;
 					}
-					if(tm < tempMedMin){
-						tempMedMin = tm;
+
+					if (hu != Variables.ERROR_HU) {
+						if (count == 0) {
+							humidityMin = hu;
+						}
+						if (hu > humidityMax) {
+							humidityMax = hu;
+						}
+						if (hu < humidityMin) {
+							humidityMin = hu;
+						}
+						humiditySum += hu;
+					} else {
+						huCount--;
 					}
-					if(te > tempEnvMax){
-						tempEnvMax = te;
-					}
-					if(te < tempEnvMin){
-						tempEnvMin = te;
-					}
-					if(hu > humidityMax){
-						humidityMax = hu;
-					}
-					if(hu < humidityMin){
-						humidityMin = hu;
-					}
-					tempMedSum += tm;
-					tempEnvSum += te;
-					humiditySum +=hu;
 					
 					//有一个报警，则总体报警
 					if(data.getSmogAlert() == 0){
@@ -222,13 +261,13 @@ public class ReportService
 			reportDailyArea.setAreaNo(areaNo);
 			reportDailyArea.setTempMedMax(tempMedMax);
 			reportDailyArea.setTempMedMin(tempMedMin);
-			reportDailyArea.setTempMedAvg((tempMedSum==0) ? 0.0 : Double.parseDouble(df.format(tempMedSum/count)));
+			reportDailyArea.setTempMedAvg((tempMedSum==0) ? 0.0 : Double.parseDouble(df.format(tempMedSum/(count + tmCount))));
 			reportDailyArea.setTempEnvMax(tempEnvMax);
 			reportDailyArea.setTempEnvMin(tempEnvMin);
-			reportDailyArea.setTempEnvAvg((tempEnvSum==0) ? 0.0 : Double.parseDouble(df.format(tempEnvSum/count)));
+			reportDailyArea.setTempEnvAvg((tempEnvSum==0) ? 0.0 : Double.parseDouble(df.format(tempEnvSum/(count + teCount))));
 			reportDailyArea.setHumidityMax(humidityMax);
 			reportDailyArea.setHumidityMin(humidityMin);
-			reportDailyArea.setHumidityAvg((humiditySum==0) ? 0.0 : Double.parseDouble(df.format(humiditySum/count)));
+			reportDailyArea.setHumidityAvg((humiditySum==0) ? 0.0 : Double.parseDouble(df.format(humiditySum/(count + huCount))));
 			reportDailyArea.setTempDevAbs(Double.parseDouble(df.format(Math.abs(reportDailyArea.getTempMedAvg()-reportDailyArea.getTempEnvAvg()))));
 			reportDailyArea.setDayOfYear(today);
 			reportDailyArea.setMonthOfYear(today.substring(0, 7));
