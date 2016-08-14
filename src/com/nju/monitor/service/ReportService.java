@@ -5,6 +5,7 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -47,115 +48,144 @@ public class ReportService
 		Date now = new Date();
 		String today = sdf.format(now);
 		String monthOfYear = sdf1.format(now);
+
+		checkNodeDailyReportN(nodeNo, month);
 		List<ReportDailyNode> reportDailyNodes = reportDailyNodeDAO.findAllByMonth(nodeNo, month);
 		//如果查询月份为本月，可能当天报表还未出，则生成临时记录
-        if(month.equals(monthOfYear)){      	
-        	ReportDailyNode reportDailyNode = new ReportDailyNode();   
-        	reportDailyNode.setSmogAlert(1);
-        	Timestamp startTime = null, endTime = null;
-			try {
-				startTime = new Timestamp(sdf2.parse(today+" 00:00:00").getTime());
-				endTime = new Timestamp(sdf2.parse(today+" 23:59:59").getTime());
-			} catch (ParseException e) {
-				e.printStackTrace();
-			}
-        	List<RegularData> dataList = regularDataDAO.findByTime(nodeNo, startTime, endTime);
-            List<NodeInfo> nodeInfos = nodeInfoDAO.findByNodeNo(nodeNo);           
-			double tempMedMax = 0.0, tempMedMin = 0.0, tempMedSum = 0.0, tempEnvMax = 0.0, tempEnvMin = 0.0, tempEnvSum = 0.0, humidityMax = 0.0, humidityMin = 0.0, humiditySum = 0.0;
-			int count = 0, tmCount = 0, teCount = 0, huCount = 0; //use for error data condition;;
-			for (RegularData data : dataList) {
-				if(data != null){					
-					double tm = data.getTempMed();
-					double te = data.getTempEnv(); 
-					double hu = data.getHumidity();
-
-					if (tm != Variables.ERROR_TMP) {
-						// 最小值初始化
-						if (count == 0) {
-							tempMedMin = tm;
-						}
-						if (tm > tempMedMax) {
-							tempMedMax = tm;
-						}
-						if (tm < tempMedMin) {
-							tempMedMin = tm;
-						}
-						tempMedSum += tm;
-					}else{
-						tmCount--;
-					}
-
-					if (te != Variables.ERROR_TMP) {
-						if (count == 0) {
-							tempEnvMin = te;
-						}
-						if (te > tempEnvMax) {
-							tempEnvMax = te;
-						}
-						if (te < tempEnvMin) {
-							tempEnvMin = te;
-						}
-						tempEnvSum += te;
-					}else{
-						teCount--;
-					}
-
-					if (hu != Variables.ERROR_HU) {
-						if (count == 0) {
-							humidityMin = hu;
-						}
-						if (hu > humidityMax) {
-							humidityMax = hu;
-						}
-						if (hu < humidityMin) {
-							humidityMin = hu;
-						}
-						humiditySum += hu;
-					} else {
-						huCount--;
-					}
-					
-					if(data.getSmogAlert() == 0){
-						reportDailyNode.setSmogAlert(0);
-					}
-					//如果是最后一条记录
-					if(count == dataList.size()-1){						
-						reportDailyNode.setBatteryVol(data.getBatteryVol());
-						reportDailyNode.setWirelessSig(data.getWirelessSig());							                       
-					}					
-					count ++;
-				}				
-			}
-			//如果该天节点信息不存在，则状态置为0
-            if(nodeInfos != null && nodeInfos.size() > 0){
-            	reportDailyNode.setStatus(nodeInfos.get(0).getStatus());	
-            	reportDailyNode.setAlert(nodeInfos.get(0).getAlert());
-            }else {
-            	reportDailyNode.setStatus(0);
-            	reportDailyNode.setAlert(0);
-			}
-			reportDailyNode.setNodeNo(nodeNo);
-			reportDailyNode.setTempMedMax(tempMedMax);
-			reportDailyNode.setTempMedMin(tempMedMin);
-			reportDailyNode.setTempMedAvg((tempMedSum==0) ? 0.0 : Double.parseDouble(df.format(tempMedSum/(count + tmCount))));
-			reportDailyNode.setTempEnvMax(tempEnvMax);
-			reportDailyNode.setTempEnvMin(tempEnvMin);
-			reportDailyNode.setTempEnvAvg((tempEnvSum==0) ? 0.0 : Double.parseDouble(df.format(tempEnvSum/(count + teCount))));
-			reportDailyNode.setHumidityMax(humidityMax);
-			reportDailyNode.setHumidityMin(humidityMin);
-			reportDailyNode.setHumidityAvg((humiditySum==0) ? 0.0 : Double.parseDouble(df.format(humiditySum/(count + huCount))));
-			reportDailyNode.setTempDevAbs(Double.parseDouble(df.format(Math.abs(reportDailyNode.getTempMedAvg()-reportDailyNode.getTempEnvAvg()))));
-			reportDailyNode.setDayOfYear(today);
-			reportDailyNode.setMonthOfYear(today.substring(0, 7));
-			
-			reportDailyNodes.add(reportDailyNode);			
+        if(month.equals(monthOfYear)){
+			reportDailyNodes.add(generateReportDailyNodeByDate(nodeNo, today));
         }	
 		return reportDailyNodes;
 	}
-    
+
+	/**
+	 * 检查是否当前日期前的所有节点日报表均已经生成
+	 * @param nodeNo
+	 * @param month
+	 */
+	public void checkNodeDailyReportN(String nodeNo, String month){
+		Calendar calendar = Calendar.getInstance();
+		int curDay =calendar.get(Calendar.DAY_OF_MONTH);
+		for(int i = 1; i < curDay; i++){
+			String dayOfYear = month + String.format("-%02d", i);
+			if(reportDailyNodeDAO.checkByNodeNoByDayOfYear(nodeNo, dayOfYear) == 0){
+				ReportDailyNode reportDailyNode = generateReportDailyNodeByDate(nodeNo, dayOfYear);
+				reportDailyNodeDAO.save(reportDailyNode);
+			}
+		}
+	}
+
+	/**
+	 * 按给定日期生成节点日报表
+	 * @param nodeNo
+	 * @param day
+	 * @return
+	 */
+	public ReportDailyNode generateReportDailyNodeByDate(String nodeNo, String day){
+		ReportDailyNode reportDailyNode = new ReportDailyNode();
+		reportDailyNode.setSmogAlert(1);
+		Timestamp startTime = null, endTime = null;
+		try {
+			startTime = new Timestamp(sdf2.parse(day+" 00:00:00").getTime());
+			endTime = new Timestamp(sdf2.parse(day+" 23:59:59").getTime());
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		List<RegularData> dataList = regularDataDAO.findByTime(nodeNo, startTime, endTime);
+		List<NodeInfo> nodeInfos = nodeInfoDAO.findByNodeNo(nodeNo);
+		double tempMedMax = 0.0, tempMedMin = 0.0, tempMedSum = 0.0, tempEnvMax = 0.0, tempEnvMin = 0.0, tempEnvSum = 0.0, humidityMax = 0.0, humidityMin = 0.0, humiditySum = 0.0;
+		int count = 0, tmCount = 0, teCount = 0, huCount = 0; //use for error data condition;;
+		for (RegularData data : dataList) {
+			if(data != null){
+				double tm = data.getTempMed();
+				double te = data.getTempEnv();
+				double hu = data.getHumidity();
+
+				if (tm != Variables.ERROR_TMP) {
+					// 最小值初始化
+					if (count == 0) {
+						tempMedMin = tm;
+					}
+					if (tm > tempMedMax) {
+						tempMedMax = tm;
+					}
+					if (tm < tempMedMin) {
+						tempMedMin = tm;
+					}
+					tempMedSum += tm;
+				}else{
+					tmCount--;
+				}
+
+				if (te != Variables.ERROR_TMP) {
+					if (count == 0) {
+						tempEnvMin = te;
+					}
+					if (te > tempEnvMax) {
+						tempEnvMax = te;
+					}
+					if (te < tempEnvMin) {
+						tempEnvMin = te;
+					}
+					tempEnvSum += te;
+				}else{
+					teCount--;
+				}
+
+				if (hu != Variables.ERROR_HU) {
+					if (count == 0) {
+						humidityMin = hu;
+					}
+					if (hu > humidityMax) {
+						humidityMax = hu;
+					}
+					if (hu < humidityMin) {
+						humidityMin = hu;
+					}
+					humiditySum += hu;
+				} else {
+					huCount--;
+				}
+
+				if(data.getSmogAlert() == 0){
+					reportDailyNode.setSmogAlert(0);
+				}
+				//如果是最后一条记录
+				if(count == dataList.size()-1){
+					reportDailyNode.setBatteryVol(data.getBatteryVol());
+					reportDailyNode.setWirelessSig(data.getWirelessSig());
+				}
+				count ++;
+			}
+		}
+		//如果该天节点信息不存在，则状态置为0
+		if(nodeInfos != null && nodeInfos.size() > 0){
+			reportDailyNode.setStatus(nodeInfos.get(0).getStatus());
+			reportDailyNode.setAlert(nodeInfos.get(0).getAlert());
+		}else {
+			reportDailyNode.setStatus(0);
+			reportDailyNode.setAlert(0);
+		}
+		reportDailyNode.setNodeNo(nodeNo);
+		reportDailyNode.setTempMedMax(tempMedMax);
+		reportDailyNode.setTempMedMin(tempMedMin);
+		reportDailyNode.setTempMedAvg((tempMedSum==0) ? 0.0 : Double.parseDouble(df.format(tempMedSum/(count + tmCount))));
+		reportDailyNode.setTempEnvMax(tempEnvMax);
+		reportDailyNode.setTempEnvMin(tempEnvMin);
+		reportDailyNode.setTempEnvAvg((tempEnvSum==0) ? 0.0 : Double.parseDouble(df.format(tempEnvSum/(count + teCount))));
+		reportDailyNode.setHumidityMax(humidityMax);
+		reportDailyNode.setHumidityMin(humidityMin);
+		reportDailyNode.setHumidityAvg((humiditySum==0) ? 0.0 : Double.parseDouble(df.format(humiditySum/(count + huCount))));
+		reportDailyNode.setTempDevAbs(Double.parseDouble(df.format(Math.abs(reportDailyNode.getTempMedAvg()-reportDailyNode.getTempEnvAvg()))));
+		reportDailyNode.setDayOfYear(day);
+		reportDailyNode.setMonthOfYear(day.substring(0, 7));
+
+		return reportDailyNode;
+	}
+
 	/**
 	 * 获取或生成区域日报
-	 * @param areaName
+	 * @param areaNo
 	 * @param month
 	 * @return
 	 */
@@ -163,30 +193,60 @@ public class ReportService
 		Date now = new Date();
 		String today = sdf.format(now);
 		String monthOfYear = sdf1.format(now);
+		checkAreaDailyReportN(areaNo, month);
 		List<ReportDailyArea> reportDailyAreas = reportDailyAreaDAO.findAllByMonth(areaNo, month);		
 		//如果查询的是本月，可能当天报表还未出，则生成临时记录
         if(month.equals(monthOfYear)){
-        	ReportDailyArea reportDailyArea = new ReportDailyArea();
-            //初始化报警参数
-        	reportDailyArea.setSmogAlert(1);
-        	reportDailyArea.setStatus(1);
-        	reportDailyArea.setAlert(0);
-        	Timestamp startTime = null, endTime = null;
-			try {
-				startTime = new Timestamp(sdf2.parse(today+" 00:00:00").getTime());
-				endTime = new Timestamp(sdf2.parse(today+" 23:59:59").getTime());
-			} catch (ParseException e) {
-				e.printStackTrace();
+			reportDailyAreas.add(generateReportDailyAreaByDate(areaNo, today));
+        }	
+		return reportDailyAreas;
+	}
+
+	/**
+	 * 检查是否当前日期前的所有区域日报表均已经生成
+	 * @param areaNo
+	 * @param month
+	 */
+	public void checkAreaDailyReportN(String areaNo, String month){
+		Calendar calendar = Calendar.getInstance();
+		int curDay =calendar.get(Calendar.DAY_OF_MONTH);
+		for(int i = 1; i < curDay; i++){
+			String dayOfYear = month + String.format("-%02d", i);
+			if(reportDailyAreaDAO.checkByAreaNoByDayOfYear(areaNo, dayOfYear) == 0){
+				ReportDailyArea reportDailyArea = generateReportDailyAreaByDate(areaNo, dayOfYear);
+				reportDailyAreaDAO.save(reportDailyArea);
 			}
-        	List<NodeInfo> nodeList = nodeInfoDAO.findActiveNodeByArea(areaNo);    
-			double tempMedMax = 0.0, tempMedMin = 0.0, tempMedSum = 0.0, tempEnvMax = 0.0, tempEnvMin = 0.0, tempEnvSum = 0.0, humidityMax = 0.0, humidityMin = 0.0, humiditySum = 0.0;
-			int count = 0, tmCount = 0, teCount = 0, huCount = 0; //use for error data condition;;;
-			double batteryVol = 0.0;
-			int wirelessSig = 0;
+		}
+	}
+
+	/**
+	 * 按给定日期生成区域日报表
+	 * @param areaNo
+	 * @param day
+	 * @return
+	 */
+	public ReportDailyArea generateReportDailyAreaByDate(String areaNo, String day){
+		ReportDailyArea reportDailyArea = new ReportDailyArea();
+		//初始化报警参数
+		reportDailyArea.setSmogAlert(1);
+		reportDailyArea.setStatus(1);
+		reportDailyArea.setAlert(0);
+		Timestamp startTime = null, endTime = null;
+		try {
+			startTime = new Timestamp(sdf2.parse(day+" 00:00:00").getTime());
+			endTime = new Timestamp(sdf2.parse(day+" 23:59:59").getTime());
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		List<NodeInfo> nodeList = nodeInfoDAO.findActiveNodeByArea(areaNo);
+		double tempMedMax = 0.0, tempMedMin = 0.0, tempMedSum = 0.0, tempEnvMax = 0.0, tempEnvMin = 0.0, tempEnvSum = 0.0, humidityMax = 0.0, humidityMin = 0.0, humiditySum = 0.0;
+		int count = 0, tmCount = 0, teCount = 0, huCount = 0; //use for error data condition;;;
+		double batteryVol = 0.0;
+		int wirelessSig = 0;
 		for(NodeInfo node: nodeList){
-			List<RegularData> dataList = regularDataDAO.findByTime(node.getNodeNo(), startTime, endTime); 
+			List<RegularData> dataList = regularDataDAO.findByTime(node.getNodeNo(), startTime, endTime);
 			for (RegularData data : dataList) {
-				if(data != null){					
+				if(data != null){
 					double tm = data.getTempMed();
 					double te = data.getTempEnv();
 					double hu = data.getHumidity();
@@ -236,46 +296,44 @@ public class ReportService
 					} else {
 						huCount--;
 					}
-					
+
 					//有一个报警，则总体报警
 					if(data.getSmogAlert() == 0){
 						reportDailyArea.setSmogAlert(0);
 					}
-					
+
 					count ++;
 					batteryVol = data.getBatteryVol();
 					wirelessSig = data.getWirelessSig();
 				}
 				//有一个离线，则总体离线
 				if(node.getStatus() == 0){
-					 reportDailyArea.setStatus(0);
+					reportDailyArea.setStatus(0);
 				}
 				//有一个报警，则总体报警
 				if(node.getAlert() != 0){
-			    	reportDailyArea.setAlert(node.getAlert());
+					reportDailyArea.setAlert(node.getAlert());
 				}
 			}
 		}
-		    reportDailyArea.setBatteryVol(batteryVol);
-		    reportDailyArea.setWirelessSig(wirelessSig);
-			reportDailyArea.setAreaNo(areaNo);
-			reportDailyArea.setTempMedMax(tempMedMax);
-			reportDailyArea.setTempMedMin(tempMedMin);
-			reportDailyArea.setTempMedAvg((tempMedSum==0) ? 0.0 : Double.parseDouble(df.format(tempMedSum/(count + tmCount))));
-			reportDailyArea.setTempEnvMax(tempEnvMax);
-			reportDailyArea.setTempEnvMin(tempEnvMin);
-			reportDailyArea.setTempEnvAvg((tempEnvSum==0) ? 0.0 : Double.parseDouble(df.format(tempEnvSum/(count + teCount))));
-			reportDailyArea.setHumidityMax(humidityMax);
-			reportDailyArea.setHumidityMin(humidityMin);
-			reportDailyArea.setHumidityAvg((humiditySum==0) ? 0.0 : Double.parseDouble(df.format(humiditySum/(count + huCount))));
-			reportDailyArea.setTempDevAbs(Double.parseDouble(df.format(Math.abs(reportDailyArea.getTempMedAvg()-reportDailyArea.getTempEnvAvg()))));
-			reportDailyArea.setDayOfYear(today);
-			reportDailyArea.setMonthOfYear(today.substring(0, 7));
-			
-			reportDailyAreas.add(reportDailyArea);		
-        }	
-		return reportDailyAreas;
+		reportDailyArea.setBatteryVol(batteryVol);
+		reportDailyArea.setWirelessSig(wirelessSig);
+		reportDailyArea.setAreaNo(areaNo);
+		reportDailyArea.setTempMedMax(tempMedMax);
+		reportDailyArea.setTempMedMin(tempMedMin);
+		reportDailyArea.setTempMedAvg((tempMedSum==0) ? 0.0 : Double.parseDouble(df.format(tempMedSum/(count + tmCount))));
+		reportDailyArea.setTempEnvMax(tempEnvMax);
+		reportDailyArea.setTempEnvMin(tempEnvMin);
+		reportDailyArea.setTempEnvAvg((tempEnvSum==0) ? 0.0 : Double.parseDouble(df.format(tempEnvSum/(count + teCount))));
+		reportDailyArea.setHumidityMax(humidityMax);
+		reportDailyArea.setHumidityMin(humidityMin);
+		reportDailyArea.setHumidityAvg((humiditySum==0) ? 0.0 : Double.parseDouble(df.format(humiditySum/(count + huCount))));
+		reportDailyArea.setTempDevAbs(Double.parseDouble(df.format(Math.abs(reportDailyArea.getTempMedAvg()-reportDailyArea.getTempEnvAvg()))));
+		reportDailyArea.setDayOfYear(day);
+		reportDailyArea.setMonthOfYear(day.substring(0, 7));
+		return reportDailyArea;
 	}
+
 	/**
 	 * 节点月报
 	 * @param nodeNo

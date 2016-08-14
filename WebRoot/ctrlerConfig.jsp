@@ -99,7 +99,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 										</a>
 										<ul class="dropdown-menu pull-right">
 											<li><a onclick="javascript:print();"><i class="icon-print"></i> 打印</a></li>
-											<li><a href="#"><i class=" icon-download-alt"></i> 导出到EXCEL</a></li>
+											<%--<li><a href="#"><i class=" icon-download-alt"></i> 导出到EXCEL</a></li>--%>
 											<li class="divider"></li>
 										</ul>
 									</div>
@@ -263,8 +263,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	            	}
 	            	inserting = true;
 	                e.preventDefault();
-	                var aiNew = oTable.fnAddData(['', '', '','','',
-	                        '', '<a class="cancel" data-mode="new" href=""><span class="label label-warning">删除</span></a>'
+	                var aiNew = oTable.fnAddData(['', '', '','','','', '<a class="cancel" data-mode="new" href=""><span class="label label-warning">取消</span></a>'
 	                ]);
 	                var nRow = oTable.fnGetNodes(aiNew[0]);
 	                editRow(oTable, nRow);
@@ -273,14 +272,15 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 
 	            $('#sample_editable_1 a.delete').live('click', function (e) {
 	                e.preventDefault();
-
-	                if (confirm("确定删除控制器?这将删除控制器下所有节点信息！") == false) {
+					var ctrlerNo = $('td', nRow)[1].innerHTML.substring(1);
+	                if (confirm("确定删除控制器: C"+ ctrlerNo +"? 这将删除控制器下所有节点信息！") == false) {
 	                    return;
 	                }
 	                var nRow = $(this).parents('tr')[0];
-	                var ctrlerNo = $('td', nRow)[1].innerHTML.substring(1);
 	                	$.post('json/areaAction_deleteCtrlerConfig',{ctrlerNo:ctrlerNo},function(data){
-		                	if(data==1){		                		
+	                		if(data == -1){
+								alert("权限不够，只有管理员才能删除控制器！!");
+							}else if(data>=1){
 		    	                oTable.fnDeleteRow(nRow);
 		    	                alert("删除成功!");
 		                	}else{
@@ -297,8 +297,8 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	                    oTable.fnDeleteRow(nRow);
 	                } else {
 	                    restoreRow(oTable, nEditing);
-	                    nEditing = null;
 	                }
+					nEditing = null;
 	            });
 
 	            $('#sample_editable_1 a.edit').live('click', function (e) {
@@ -347,7 +347,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			                    		{ctrlerNo:ctrlerNo, ctrlerDesc:ctrlerDesc, ctrlerStatus:ctrlerStatus},
 			                    		function(data){
 			                    	if(data){
-			                    		saveRow(oTable, nEditing, status);
+			                    		saveRow(oTable, nEditing, ctrlerStatus);
 			    	                    nEditing = null;	                    
 			    	                    alert("更新成功!");
 			                    	}else{

@@ -28,6 +28,11 @@ public class AlertService
 	public int relieveAlert(int id) {
 		return alertInfoDAO.updateIsRead(id);	
 	}
+
+	public int relieveAlertByNodeNo(String nodeNo) {
+		return alertInfoDAO.updateIsReadByNodeNo(nodeNo);
+	}
+
 	public List<AreaAlertInfo> findUnReadByArea(int page, String areaNo, Timestamp startTime,Timestamp endTime, int range){
 		return alertInfoDAO.findUnReadByArea(page, areaNo, startTime, endTime, range);
 	}

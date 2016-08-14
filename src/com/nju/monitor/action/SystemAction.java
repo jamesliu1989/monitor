@@ -7,6 +7,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.opensymphony.xwork2.ActionContext;
 import org.apache.struts2.interceptor.ServletRequestAware;
 import org.apache.struts2.interceptor.ServletResponseAware;
 import org.springframework.context.annotation.Scope;
@@ -41,6 +42,8 @@ public class SystemAction extends ActionSupport implements ServletRequestAware, 
 	
 	public String updateConfig(){		
 		systemService.updateConfig(config);
+		//更新session
+		ActionContext.getContext().getSession().put("config", config);
 		result = 1;
 		return "JSON1";
 	}

@@ -93,6 +93,31 @@ public class ReportDailyAreaDAO{
 		}
 	}
 
+	public int checkByAreaNoByDayOfYear(String areaNo, String dayOfYear){
+		try {
+			String queryString = "SELECT COUNT(*) from ReportDailyArea where areaNo = ? and dayOfYear = ?";
+			Query query = sessionFactory.getCurrentSession().createQuery(queryString);
+			query.setParameter(0, areaNo);
+			query.setParameter(1, dayOfYear);
+			return ((Long)query.uniqueResult()).intValue();
+		} catch (RuntimeException re) {
+			throw re;
+		}
+	}
+
+
+
+	public int deleteAreaReportByCtrlerNo(int ctrlerNo) {
+		try {
+			String queryString = "delete from ReportDailyArea where areaNo like :ctrlerNo";
+			Query query = sessionFactory.getCurrentSession().createQuery(queryString);
+			query.setParameter("ctrlerNo", "C" + ctrlerNo +"-%");
+			return query.executeUpdate();
+		} catch (RuntimeException re) {
+			throw re;
+		}
+	}
+
 	public List<ReportDailyArea> findAllByMonth(String areaNo, String month){
 		try {
 			String queryString = "from ReportDailyArea where areaNo = ? and monthOfYear = ? order by dayOfYear asc";

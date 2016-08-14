@@ -26,6 +26,7 @@ import com.opensymphony.xwork2.ActionSupport;
 @Scope("prototype")
 public class AlertAction extends ActionSupport implements ServletRequestAware, ServletResponseAware{
 
+
 	
 	private static final long serialVersionUID = 1L;
 	private HttpServletRequest request;
@@ -68,18 +69,25 @@ public class AlertAction extends ActionSupport implements ServletRequestAware, S
 		result = alertService.relieveAlert(id);
 		return "JSON1";
 	}
+
+	/**
+	 * 解除所有报警
+	 */
+	public String relieveAlertByNodeNo(){
+		result = alertService.relieveAlertByNodeNo(nodeNo);
+		return "JSON1";
+	}
 	
 	public String getUnReadByNodeTime(){
 		if(nodeNo.equals("-1")){
 			alerts = alertService.findUnReadByArea(page, areaNo, startTime, endTime, range);
-			//第一页为0， 向下取整
-			pageNum = new Double(Math.floor((double)alertService.findUnReadByAreaCount(areaNo, startTime, endTime, range)/10)).intValue();
+			//第一页为0， 向上取整
+			pageNum = new Double(Math.ceil(alertService.findUnReadByAreaCount(areaNo, startTime, endTime, range)/10.0)).intValue();
 		}else {
 			alerts = alertService.findUnReadByNodeTime(page, nodeNo, startTime, endTime, range);
-			//第一页为0， 向下取整
-			pageNum = new Double(Math.floor((double)alertService.findUnReadByNodeTimeCount(page, nodeNo, startTime, endTime, range)/10)).intValue();
-		}		
-	
+			//第一页为0， 向上取整
+			pageNum = new Double(Math.ceil((double)alertService.findUnReadByNodeTimeCount(page, nodeNo, startTime, endTime, range)/10.0)).intValue();
+		}
 		return "alertView";
 	}
 	

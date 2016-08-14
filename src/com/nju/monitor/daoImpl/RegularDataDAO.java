@@ -124,7 +124,20 @@ public class RegularDataDAO{
 			throw re;
 		}
 	}
-	
+
+	public int deleteByCtrlerNo(int ctrlerNo){
+		try {
+			String queryString = "delete from RegularData where ctrlerNo = :ctrlerNo";
+			int result = sessionFactory.getCurrentSession()
+					.createQuery(queryString)
+					.setInteger("ctrlerNo", ctrlerNo)
+					.executeUpdate();
+			return result;
+		} catch (RuntimeException re) {
+			throw re;
+		}
+	}
+
 	public RegularData findById(java.lang.Integer id) {
 		log.debug("getting RegularData instance with id: " + id);
 		try {

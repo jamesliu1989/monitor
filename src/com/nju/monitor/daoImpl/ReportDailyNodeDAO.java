@@ -81,6 +81,8 @@ public class ReportDailyNodeDAO{
 		}
 	}
 
+
+
 	public ReportDailyNode findById(java.lang.Integer id) {
 		log.debug("getting ReportDailyNode instance with id: " + id);
 		try {
@@ -104,6 +106,30 @@ public class ReportDailyNodeDAO{
 			throw re;
 		}
 	}
+
+	public int deleteNodeReportByCtrlerNo(int ctrlerNo) {
+		try {
+			String queryString = "delete from ReportDailyNode where nodeNo like :ctrlerNo";
+			Query query = sessionFactory.getCurrentSession().createQuery(queryString);
+			query.setParameter("ctrlerNo", "C" + ctrlerNo +"-%");
+			return query.executeUpdate();
+		} catch (RuntimeException re) {
+			throw re;
+		}
+	}
+
+	public int checkByNodeNoByDayOfYear(String nodeNo, String dayOfYear){
+		try {
+			String queryString = "SELECT COUNT(*) from ReportDailyNode where nodeNo = ? and dayOfYear = ?";
+			Query query = sessionFactory.getCurrentSession().createQuery(queryString);
+			query.setParameter(0, nodeNo);
+			query.setParameter(1, dayOfYear);
+			return ((Long)query.uniqueResult()).intValue();
+		} catch (RuntimeException re) {
+			throw re;
+		}
+	}
+
 	public List<ReportDailyNode> findByExample(ReportDailyNode instance) {
 		log.debug("finding ReportDailyNode instance by example");
 		try {
@@ -240,4 +266,6 @@ public class ReportDailyNodeDAO{
 			throw re;
 		}
 	}
+
+
 }

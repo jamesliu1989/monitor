@@ -184,6 +184,7 @@ public class RegularDataAction extends ActionSupport implements ServletRequestAw
 		dataList = regularDataService.nodesView(ctrlerNo, areaNo);
 		return "JSON2";
 	}
+
     @Override
 	public void setServletResponse(HttpServletResponse response) {
 		this.response = response;

@@ -10,6 +10,8 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.nju.monitor.model.SystemConfig;
+import com.nju.monitor.service.SystemService;
 import org.apache.struts2.interceptor.ServletRequestAware;
 import org.apache.struts2.interceptor.ServletResponseAware;
 import org.springframework.context.annotation.Scope;
@@ -26,6 +28,7 @@ public class UserAction extends ActionSupport implements ServletRequestAware, Se
 	
 	private static final long serialVersionUID = 1L;
 	private UserService userService;
+	private SystemService systemService;
 	private User user;
 	private List<User> users;
 	private String userName;
@@ -50,8 +53,18 @@ public class UserAction extends ActionSupport implements ServletRequestAware, Se
 		result = userService.login(userName, passWord);
 		if (1 == result) {
 			User loginUser = userService.findUserByName(userName);
-			ActionContext.getContext().getSession().put("user", loginUser);
-			return "SUCCESS";
+			if(loginUser.getActive() == 1){
+				SystemConfig config = systemService.findConfig();
+				ActionContext.getContext().getSession().put("user", loginUser);
+				ActionContext.getContext().getSession().put("config", config);
+				return "SUCCESS";
+			}else{
+				PrintWriter out=response.getWriter();
+				out.print(1);
+				out.flush();
+				return null;
+			}
+
 		}else {
 			PrintWriter out=response.getWriter();
 			out.print(0);
@@ -130,8 +143,13 @@ public class UserAction extends ActionSupport implements ServletRequestAware, Se
 	 * @return
 	 */
 	public String userView(){
-		users = userService.findAll();
-		return "USERVIEW";
+		User sessionUser = (User) request.getSession().getAttribute("user");
+		if(sessionUser.getFlag() != 0){
+			users = userService.findAll();
+			return "USERVIEW";
+		}else{
+			return "ERROR";
+		}
 	}
 	
 	/**
@@ -270,5 +288,10 @@ public class UserAction extends ActionSupport implements ServletRequestAware, Se
 	@Override
 	public void setServletRequest(HttpServletRequest request) {
 	    this.request = request;	
+	}
+
+	@Resource
+	public void setSystemService(SystemService systemService) {
+		this.systemService = systemService;
 	}
 }

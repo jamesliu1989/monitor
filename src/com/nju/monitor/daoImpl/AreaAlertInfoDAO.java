@@ -185,7 +185,7 @@ public class AreaAlertInfoDAO {
 		String  read = (range == 0 ? "isRead = 0 and" : "");
 		try {
 			if(startTime==null || endTime==null){
-			String queryString = "select count(id) from AreaAlertInfo where "+read+" nodeNo = ?order by alertTime desc";
+			String queryString = "select count(id) from AreaAlertInfo where "+read+" nodeNo = ? order by alertTime desc";
 			return (long)sessionFactory.getCurrentSession().createQuery(queryString)
 					.setParameter(0, nodeNo)
 					.uniqueResult();
@@ -247,6 +247,18 @@ public class AreaAlertInfoDAO {
 		query.setParameter("id", id);
 		return query.executeUpdate();
 	}
+
+	/**
+	 * 解除所有报警
+	 * @param id
+	 * @return
+	 */
+	public int updateIsReadByNodeNo(String nodeNo) {
+		String hql = "update AreaAlertInfo set isRead = 1 where nodeNo=:nodeNo";
+		Query query = sessionFactory.getCurrentSession().createQuery(hql);
+		query.setParameter("nodeNo", nodeNo);
+		return query.executeUpdate();
+	}
 	
 	public long findUnReadCount() {
 		long count = 0;
@@ -297,6 +309,28 @@ public class AreaAlertInfoDAO {
 			return queryObject.list();
 		} catch (RuntimeException re) {
 			log.error("find all failed", re);
+			throw re;
+		}
+	}
+
+	public int deleteAlertParaByCtrlerNo(int ctrlerNo) {
+		try {
+			String queryString = "delete from AreaAlertParameter where areaNo like :ctrlerNo";
+			Query query = sessionFactory.getCurrentSession().createQuery(queryString);
+			query.setParameter("ctrlerNo", "C" + ctrlerNo +"-%");
+			return query.executeUpdate();
+		} catch (RuntimeException re) {
+			throw re;
+		}
+	}
+
+	public int deleteAlertInfoByCtrlerNo(int ctrlerNo) {
+		try {
+			String queryString = "delete from AreaAlertInfo where areaNo like :ctrlerNo";
+			Query query = sessionFactory.getCurrentSession().createQuery(queryString);
+			query.setParameter("ctrlerNo", "C" + ctrlerNo +"-%");
+			return query.executeUpdate();
+		} catch (RuntimeException re) {
 			throw re;
 		}
 	}

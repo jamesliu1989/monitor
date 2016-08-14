@@ -109,7 +109,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 										</a>
 										<ul class="dropdown-menu pull-right">
 											<li><a onclick="javascript:print();"><i class="icon-print"></i> 打印</a></li>
-											<li><a href="#"><i class=" icon-download-alt"></i> 导出到EXCEL</a></li>
+											<%--<li><a href="#"><i class=" icon-download-alt"></i> 导出到EXCEL</a></li>--%>
 											<li class="divider"></li>
 										</ul>
 									</div>
@@ -143,7 +143,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 											<td><s:if test="#u.flag==0">普通用户</s:if><s:elseif test="#u.flag==1">一般管理员</s:elseif><s:else>超级管理员</s:else></td>
 											<td><s:if test="#u.active==0">停用</s:if><s:else>正常</s:else></td>
 											<td><a href="#edit_modal" data-toggle="modal" onclick="userEdit(this)"><span class="label label-success">编辑</span></a></td>
-											<td><a onclick="deleteConfirm(this, ${u.id})"><span class="label label-important">删除</span></a></td>
+											<td><a onclick="deleteConfirm(this, ${u.id})" href=""><span class="label label-important">删除</span></a></td>
 										</tr>
 									</s:iterator>	
 									</tbody>
@@ -152,16 +152,16 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 								    <div class="span6">
 								        <!-- <div class="dataTables_info" id="sample_1_info">Showing 1 to 10 of 43 entries</div> -->
 								    </div>
-								    <div class="span6">
-								      <div class="dataTables_paginate paging_bootstrap pagination">
-								       <ul>
-								          <li class="prev disabled"><a href="#">← <span class="hidden-480">上一页</span></a></li>
-								          <li class="active"><a href="#">1</a></li>
-								          <li><a href="#">2</a></li>
-								          <li class="next"><a href="#"><span class="hidden-480">下一页</span> → </a></li>
-								       </ul>
-								     </div>
-								  </div>
+								    <%--<div class="span6">--%>
+								      <%--<div class="dataTables_paginate paging_bootstrap pagination">--%>
+								       <%--<ul>--%>
+								          <%--<li class="prev disabled"><a href="#">← <span class="hidden-480">上一页</span></a></li>--%>
+								          <%--<li class="active"><a href="#">1</a></li>--%>
+								          <%--<li><a href="#">2</a></li>--%>
+								          <%--<li class="next"><a href="#"><span class="hidden-480">下一页</span> → </a></li>--%>
+								       <%--</ul>--%>
+								     <%--</div>--%>
+								  <%--</div>--%>
 							 </div>
 							</div>
 						</div>

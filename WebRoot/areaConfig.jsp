@@ -112,7 +112,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 										</a>
 										<ul class="dropdown-menu pull-right">
 											<li><a onclick="javascript:print();"><i class="icon-print"></i> 打印</a></li>
-											<li><a href="#"><i class=" icon-download-alt"></i> 导出到EXCEL</a></li>
+											<%--<li><a href="#"><i class=" icon-download-alt"></i> 导出到EXCEL</a></li>--%>
 											<li class="divider"></li>
 										</ul>
 									</div>
@@ -298,7 +298,9 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		                	if(data==1){		                		
 		    	                oTable.fnDeleteRow(nRow);
 		    	                alert("删除成功!");
-		                	}else{
+		                	}else if(data == -1){
+								alert("未分区域无法删除!");
+							}else{
 		                		alert("删除失败!");
 		                	}
 		                });               	                

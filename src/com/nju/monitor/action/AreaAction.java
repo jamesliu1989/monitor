@@ -8,15 +8,12 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.nju.monitor.model.*;
 import org.apache.struts2.interceptor.ServletRequestAware;
 import org.apache.struts2.interceptor.ServletResponseAware;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import com.nju.monitor.model.AreaAlertParameter;
-import com.nju.monitor.model.AreaInfo;
-import com.nju.monitor.model.CtrlerInfo;
-import com.nju.monitor.model.NodeInfo;
 import com.nju.monitor.service.AreaParameterService;
 import com.nju.monitor.service.AreaService;
 import com.nju.monitor.service.NodeService;
@@ -78,9 +75,15 @@ public class AreaAction extends ActionSupport implements ServletRequestAware, Se
 		result = areaService.updateCtrlerDesc(ctrlerNo, ctrlerDesc, ctrlerStatus);
 		return "JSON3";
 	}
-	//删除控制器，将删除所有节点信息,通过触发器实现
+	//删除控制器，将删除所有节点信息
 	public String deleteCtrlerConfig(){
-		result = areaService.deleteCtrler(ctrlerNo);
+		User sessionUser = (User) request.getSession().getAttribute("user");
+		//只有一般管理员以上可以删除
+		if( sessionUser != null && sessionUser.getFlag() >= 1) {
+			result = areaService.deleteCtrler(ctrlerNo);
+		}else{
+			result = -1;
+		}
 		return "JSON3";
 	}
 	public String addCtrlerConfig(){

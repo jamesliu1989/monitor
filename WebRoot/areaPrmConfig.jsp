@@ -132,7 +132,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 										</a>
 										<ul class="dropdown-menu pull-right">
 											<li><a onclick="javascript:print();"><i class="icon-print"></i> 打印</a></li>
-											<li><a href="#"><i class=" icon-download-alt"></i> 导出到EXCEL</a></li>
+											<%--<li><a href="#"><i class=" icon-download-alt"></i> 导出到EXCEL</a></li>--%>
 											<li class="divider"></li>
 										</ul>
 									</div>
@@ -150,7 +150,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 										    <th colspan="3">环境</th>
 											<th rowspan="2">湿度上限（%RH）</th>
 										    <th rowspan="2" style="max-width:40px;">单支温差（℃）</th>
-											<th rowspan="2" style="max-width:40px;">温度均差（℃）</th>											
+											<th rowspan="2" style="max-width:40px;">温度均差（℃）</th>
 											<th rowspan="2" style="max-width:40px;">电压（V）</th>
 											<th rowspan="2" style="max-width:40px;">信号（dB）</th>
 											<th rowspan="2">类型</th>
@@ -174,7 +174,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 											<td>${pm.tempMedMax}</td>
 											<td>${pm.tempMedRate}</td>
 											<td>${pm.tempMedDevAbs}</td>
-											
+
 											<td>${pm.tempEnvMax}</td>
 											<td>${pm.tempEnvRate}</td>
 											<td>${pm.tempEnvDevAbs}</td>

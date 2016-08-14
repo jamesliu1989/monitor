@@ -44,7 +44,8 @@
 			<result name="SUCCESS">index.jsp</result>
 			<result name="FAIL">login.jsp</result>
 			<result name="LOGOUT">login.jsp</result>
-			<result name="USERVIEW">userView.jsp</result>			
+			<result name="USERVIEW">userView.jsp</result>
+			<result name="ERROR">error.jsp</result>
 		</action>
 		<action name="reportAction_*" class="com.nju.monitor.action.ReportAction" method="{1}">
 			<result name="nodeDailyReport">nodeDailyReport.jsp</result>

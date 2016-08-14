@@ -119,7 +119,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 										</a>
 										<ul class="dropdown-menu pull-right">
 											<li><a onclick="javascript:print();"><i class="icon-print"></i> 打印</a></li>
-											<li><a href="#"><i class=" icon-download-alt"></i> 导出到EXCEL</a></li>
+											<%--<li><a href="#"><i class=" icon-download-alt"></i> 导出到EXCEL</a></li>--%>
 											<li class="divider"></li>
 										</ul>
 									</div>
@@ -355,41 +355,49 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	  $('#subbtn').click(function(){			
 		   $("#sample_editable_1 tbody").html('');
 		   var ctrlerNo = $('#ctrlerNo_s').val();
+		  if(ctrlerNo == null || ctrlerNo == '-1'){
+		  	alert('请选择控制器号！');
+		  	return;
+		  }
 		   $('#cNO').val(ctrlerNo);  //保存到隐藏域，提交时使用
 		   var areaNo = $('#areaName_s').val();
 		   $(".caption").html('<i class="icon-edit"></i>控制器C'+ ctrlerNo +'-区域节点信息');
 		   //获取数据
 		   $.post('json/nodeAction_nodeView',{ctrlerNo:ctrlerNo,areaNo:areaNo},function(data){
-				  if(data.length>0){
-				//按区域循环
-				var index = 1;
-			   for(var j=0;j<data.length;j++){
-					$("#sample_editable_1 tbody").append(
-							'<tr id="desc" style="color:#666;background-color: #D4E7F9;">'+
-								'<td colspan="2"><i class="icon-globe"></i>&nbsp;控制器-区域：'+data[j][0].areaNo+'</td>'+
-								'<td colspan="4"><i class="icon-edit"></i>&nbsp;区域描述：'+data[j][0].areaDesc+'</td>'+
-							'</tr>');
-				   for(var i=0;i<data[j].length;i++){
-					   var status = data[j][i].status;
-					   if(status == '0'){
-						   status = '已停用';
-					   }else{
-						   status = '正常';
+			   if (data.length > 0) {
+				   //按区域循环
+				   var index = 1;
+				   for (var j = 0; j < data.length; j++) {
+					   if (data[j].length > 0) {
+						   $("#sample_editable_1 tbody").append(
+								   '<tr id="desc" style="color:#666;background-color: #D4E7F9;">' +
+								   '<td colspan="2"><i class="icon-globe"></i>&nbsp;控制器-区域：' + data[j][0].areaNo + '</td>' +
+								   '<td colspan="4"><i class="icon-edit"></i>&nbsp;区域描述：' + data[j][0].areaDesc + '</td>' +
+								   '</tr>');
+						   for (var i = 0; i < data[j].length; i++) {
+							   var status = data[j][i].status;
+							   if (status == '0') {
+								   status = '已停用';
+							   } else {
+								   status = '正常';
+							   }
+							   $("#sample_editable_1 tbody").append(
+									   '<tr>' +
+									   '<td>' + (index++) + '<input type="hidden" value="' + data[j][i].areaNo + '"></td>' +
+									   '<td>' + data[j][i].nodeNo + '</td>' +
+									   '<td>' + data[j][i].nodeName + '</td>' +
+									   '<td>' + data[j][i].nodeDesc + '</td>' +
+									   '<td>' + status + '</td>' +
+									   '<td><a class="edit" href="#edit_modal" data-toggle="modal" onclick="nodeEdit(this)"><span class="label label-success">编辑</span></a></td>' +
+									   //'<td><a class="delete" href="javascript:;" onclick="nodeDelete(this)">删除</a></td>'+
+									   '</tr>');
+						   }
 					   }
-					$("#sample_editable_1 tbody").append(
-					'<tr>'+
-						'<td>'+(index++)+'<input type="hidden" value="'+data[j][i].areaNo+'"></td>'+
-						'<td>'+data[j][i].nodeNo+'</td>'+
-						'<td>'+data[j][i].nodeName+'</td>'+
-						'<td>'+data[j][i].nodeDesc+'</td>'+
-						'<td>'+status+'</td>'+
-						'<td><a class="edit" href="#edit_modal" data-toggle="modal" onclick="nodeEdit(this)"><span class="label label-success">编辑</span></a></td>'+
-						//'<td><a class="delete" href="javascript:;" onclick="nodeDelete(this)">删除</a></td>'+
-					'</tr>');
 				   }
-			   }		  			   
-				  }
-			   });
+			   } else {
+				   alert('无节点信息');
+			   }
+		   });
 		   
 	  });
 

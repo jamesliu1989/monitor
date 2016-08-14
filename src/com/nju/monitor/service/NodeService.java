@@ -56,6 +56,7 @@ public class NodeService
 		this.nodeInfoDAO = nodeInfoDAO;
 	}
 
-
-
+    public int deleteNodeByCtrlerNo(int ctrlerNo) {
+    	return nodeInfoDAO.deleteByCtrlerNo(ctrlerNo);
+    }
 }

@@ -120,24 +120,33 @@
             <div class="row-fluid">
                 <div class="span12 form-inline">
                     <div class="controls">
-                        <label class="checkbox inline">
-                            <input type="checkbox" checked value="" id="tempMed_c"> 介质温度
-                        </label>
-                        <label class="checkbox inline">
-                            <input type="checkbox" checked value="" id="areaTempMedAvg_c"> 区域介质均温
-                        </label>
-                        <label class="checkbox inline">
-                            <input type="checkbox" checked value="" id="tempEnv_c"> 环境温度
-                        </label>
-                        <label class="checkbox inline">
-                            <input type="checkbox" checked value="" id="areaTempEnvAvg_c"> 区域环境均温
-                        </label>
-                        <label class="checkbox inline">
-                            <input type="checkbox" checked value="" id="humidity_c"> 湿度
-                        </label>
-                        <label class="checkbox inline">
-                            <input type="checkbox" checked value="" id="areaHumidityAvg_c"> 区域湿度均值
-                        </label>
+                        <s:if test="#session.config.showTempMed == true">
+                            <label class="checkbox inline">
+                                <input type="checkbox" checked value="" id="tempMed_c"> 介质温度
+                            </label>
+                            <label class="checkbox inline">
+                                <input type="checkbox" checked value="" id="areaTempMedAvg_c"> 区域介质均温
+                            </label>
+                        </s:if>
+
+                        <s:if test="#session.config.showTempEnv == true">
+                            <label class="checkbox inline">
+                                <input type="checkbox" checked value="" id="tempEnv_c"> 环境温度
+                            </label>
+                            <label class="checkbox inline">
+                                <input type="checkbox" checked value="" id="areaTempEnvAvg_c"> 区域环境均温
+                            </label>
+                        </s:if>
+
+                        <s:if test="#session.config.showHumidity == true">
+                            <label class="checkbox inline">
+                                <input type="checkbox" checked value="" id="humidity_c"> 湿度
+                            </label>
+                            <label class="checkbox inline">
+                                <input type="checkbox" checked value="" id="areaHumidityAvg_c"> 区域湿度均值
+                            </label>
+                        </s:if>
+
                         <label class="checkbox inline">
                             <input type="checkbox" checked value="" id="batteryVol_c"> 电池电压
                         </label>

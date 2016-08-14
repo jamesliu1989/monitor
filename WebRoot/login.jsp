@@ -84,13 +84,13 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 				登录 <i class="m-icon-swapright m-icon-white"></i>
 				</button>            
 			</div>
-			<div class="forget-password">
-				<h4>忘记密码 ?</h4>
-				<p>
-					点击 <a href="javascript:;" class="" id="forget-password">这里</a>
-					联系系统管理员找回密码.
-				</p>
-			</div>
+			<%--<div class="forget-password">--%>
+				<%--<h4>忘记密码 ?</h4>--%>
+				<%--<p>--%>
+					<%--点击 <a href="javascript:;" class="" id="forget-password">这里</a>--%>
+					<%--联系系统管理员找回密码.--%>
+				<%--</p>--%>
+			<%--</div>--%>
 		</form>
 		<!-- END LOGIN FORM -->        
 		<!-- BEGIN FORGOT PASSWORD FORM -->
@@ -119,7 +119,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	<!-- END LOGIN -->
 	<!-- BEGIN COPYRIGHT -->
 	<div class="copyright">
-		2015 &copyright; 无线测温监控平台.
+		Copyright &copy; 2016- 无线测温监控系统
 	</div>
 	<!-- END COPYRIGHT -->
 	<!-- BEGIN JAVASCRIPTS(Load javascripts at bottom, this will reduce page load time) -->
@@ -199,11 +199,12 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		            	$.post('userAction_login', {userName:userName, passWord:passWord}, function(data){
 		            		if(data == 0){
 		            			alert("用户名或密码错误！");
-		            		}else{
-		            			window.location.href = "index.jsp";
-		            		}
+		            		}else if(data == 1){
+								alert("该用户已被停用！");
+							}else{
+								window.location.href = "index.jsp"
+							};
 		            	});
-		            	
 		            }
 		        });
 

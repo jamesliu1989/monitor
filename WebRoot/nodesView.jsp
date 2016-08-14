@@ -131,7 +131,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 										<ul class="dropdown-menu pull-right">
 											<li><a onclick="javascript:print();">
 										        <i class="icon-print"></i> 打印</a></li>
-											<li><a href="#"><i class=" icon-download-alt"></i> 导出到EXCEL</a></li>
+										<%--	<li><a href="#"><i class=" icon-download-alt"></i> 导出到EXCEL</a></li>--%>
 											<li class="divider"></li>
 										</ul>
 									</div>
@@ -143,10 +143,18 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 										<tr>
 											<th>序号</th>											
 											<th>节点编号</th>
+											<s:if test="#session.config.showTempMed == true">
 											<th>介质温度（℃）</th>
+											</s:if>
+											<s:if test="#session.config.showTempEnv == true">
 											<th>环境温度（℃）</th>
+											</s:if>
+											<s:if test="#session.config.showHumidity == true">
 											<th>湿度（%RH）</th>
+											</s:if>
+											<s:if test="#session.config.showSmogAlert == true">
 											<th>烟雾报警</th>
+											</s:if>
 											<th>电池电压（V）</th>
 											<th>工作状态</th>
 											<th>无线信号</th>
@@ -263,9 +271,15 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 					      '<tr style="color:#666;font-size:12px;background-color: #D4E7F9;">'+
 						      '<td colspan="11"><i class="icon-globe"></i>&nbsp;'+ data[i].areaNo+'&nbsp;('+ data[i].areaDesc +')'+
 						      '&nbsp;&nbsp;&nbsp;节点数：'+ data[i].activeNodeNum+'/'+data[i].nodeNum +
+						  <s:if test="#session.config.showTempMed == true">
 						      '&nbsp;&nbsp;&nbsp;介质温度（最高/最低/平均）：'+ data[i].tempMedMax + '&nbsp/&nbsp' + data[i].tempMedMin + '&nbsp/&nbsp' + data[i].tempMedAvg +'&nbsp;℃ '+
-						      '&nbsp;&nbsp;&nbsp;环境温度：'+ data[i].tempEnvMax + '&nbsp/&nbsp' + data[i].tempEnvMin + '&nbsp/&nbsp' + data[i].tempEnvAvg +'&nbsp;℃ '+
-                              '&nbsp;&nbsp;&nbsp;湿度：'+ data[i].humidityMax + '&nbsp/&nbsp' + data[i].humidityMin + '&nbsp/&nbsp' + data[i].humidityAvg +'&nbsp;%RH'+
+								  </s:if>
+						  <s:if test="#session.config.showTempEnv == true">
+						      '&nbsp;&nbsp;&nbsp;环境温度（最高/最低/平均）：'+ data[i].tempEnvMax + '&nbsp/&nbsp' + data[i].tempEnvMin + '&nbsp/&nbsp' + data[i].tempEnvAvg +'&nbsp;℃ '+
+								  </s:if>
+						  <s:if test="#session.config.showHumidity == true">
+                              '&nbsp;&nbsp;&nbsp;湿度（最高/最低/平均）：'+ data[i].humidityMax + '&nbsp/&nbsp' + data[i].humidityMin + '&nbsp/&nbsp' + data[i].humidityAvg +'&nbsp;%RH'+
+								  </s:if>
 						      '</tr>');
 					   
 					     for(var j = 0; j<nodes.length; j++){
@@ -281,24 +295,30 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 							   statusLabel = 'label-important';
 							   statusIcon = 'icon-plane';
 						   }
-						   if(nodes[j].tempMed > data[i].medTempAlert){
+
+						   if(nodes[j].tempMed == 6553.5) {
+							   nodes[j].tempMed = '<span class="label-important" style="color:#fff">传感器错误</span>';
+						   }else if(nodes[j].tempMed > data[i].medTempAlert){
 							   nodes[j].tempMed = '<span class="label-important" style="color:#fff">'+ nodes[j].tempMed+ '</span>';
 						   }else if(nodes[j].tempMed > data[i].medTempPreAlert){
 							   nodes[j].tempMed = '<span class="label-warning" style="color:#fff">'+ nodes[j].tempMed+ '</span>';
 						   }
-						   
-						   if(nodes[j].tempEnv > data[i].envTempAlert){
+
+						   if(nodes[j].tempEnv == 6553.5) {
+							   nodes[j].tempEnv = '<span class="label-important" style="color:#fff">传感器错误</span>';
+						   }else if(nodes[j].tempEnv > data[i].envTempAlert){
 							   nodes[j].tempEnv = '<span class="label-important" style="color:#fff">'+ nodes[j].tempEnv+ '</span>';
 						   }else if(nodes[j].tempEnv > data[i].envTempPreAlert){
 							   nodes[j].tempEnv = '<span class="label-warning" style="color:#fff">'+ nodes[j].tempEnv+ '</span>';
 						   }
-						   
- 						   if(nodes[j].humidity > data[i].humidityAlert){
+
+						  if(nodes[j].humidity == 255) {
+							  nodes[j].humidity = '<span class="label-important" style="color:#fff">传感器错误</span>';
+						   }else if(nodes[j].humidity > data[i].humidityAlert){
 							   nodes[j].humidity = '<span class="label-important" style="color:#fff">'+ nodes[j].humidity+ '</span>';
 						   }else if(nodes[j].humidity > data[i].humidityPreAlert){
 							   nodes[j].humidity = '<span class="label-warning" style="color:#fff">'+ nodes[j].humidity+ '</span>';
 						   }
-						   
 						   if(nodes[j].batteryVol < data[i].batteryVolAlert){
 							   nodes[j].batteryVol = '<span class="label-important" style="color:#fff">'+ nodes[j].batteryVol+ '</span>';
 						   }else if(nodes[j].batteryVol < data[i].batteryVolPreAlert){
@@ -313,10 +333,18 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 					         '<tr>'+
 						        '<td>'+(j+1)+'</td>'+						        
 						        '<td>'+ nodes[j].nodeNo +'</td>'+
+							 <s:if test="#session.config.showTempMed == true">
 						        '<td>'+ nodes[j].tempMed +'</td>'+
+							 </s:if>
+							 <s:if test="#session.config.showTempEnv == true">
 						        '<td>'+ nodes[j].tempEnv +'</td>'+
+							 </s:if>
+							 <s:if test="#session.config.showHumidity == true">
                                 '<td>'+ nodes[j].humidity +'</td>'+
+							</s:if>
+							 <s:if test="#session.config.showSmogAlert == true">
 						        '<td><span class="label '+ alertLabel +'"><i class="'+ alertIcon +'"></i>&nbsp;'+ alert +'</span></td>'+
+							</s:if>
 						        '<td>'+ nodes[j].batteryVol +'</td>'+
 						        '<td><span class="label '+ statusLabel +'"><i class="'+ statusIcon +'"></i>&nbsp;&nbsp;'+ status +'</span></td>'+
 						        '<td>'+ nodes[j].wirelessSig +'</td>'+

@@ -68,6 +68,7 @@
 						</li>
 					</ul>
 				</li>
+<s:if test="#session.user.flag != 0">
 				<li id="menu6">
 					<a href="javascript:;">
 					<i class="icon-sitemap"></i> 
@@ -136,6 +137,7 @@
 						</li>
 					</ul>
 				</li>
+</s:if>
 				<%--<li class="last " id="menu9">--%>
 					<%--<a href="javascript:;">--%>
 					<%--<i class="icon-fire"></i> --%>

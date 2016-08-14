@@ -1,10 +1,7 @@
 package com.nju.monitor.service;
 
 import com.nju.monitor.daoImpl.*;
-import com.nju.monitor.model.AreaInfo;
-import com.nju.monitor.model.CtrlerInfo;
-import com.nju.monitor.model.NodeInfo;
-import com.nju.monitor.model.RegularData;
+import com.nju.monitor.model.*;
 import com.nju.monitor.util.Variables;
 import org.springframework.stereotype.Component;
 
@@ -22,6 +19,9 @@ public class AreaService {
     private NodeInfoDAO nodeInfoDAO;
     private CtrlerInfoDAO ctrlerInfoDAO;
     private SystemDAO systemDAO;
+    private ReportDailyNodeDAO reportDailyNodeDAO;
+    private ReportDailyAreaDAO reportDailyAreaDAO;
+    private AreaAlertInfoDAO alertInfoDAO;
 
 
     public List getName(int ctrlerNo) {
@@ -41,6 +41,14 @@ public class AreaService {
     }
 
     public int delete(int id) {
+        AreaInfo areaInfo = areaInfoDAO.findById(id);
+        if(areaInfo != null){
+            if(areaInfo.getAreaName().equals("未分区域")){
+                return -1;
+            }
+            String newAreaNo = "C" + areaInfo.getCtrlerNo()+ "-未分区域";
+            nodeInfoDAO.updateAreaNo(areaInfo.getAreaNo(), newAreaNo);
+        }
         return areaInfoDAO.deleteById(id);
     }
 
@@ -94,11 +102,25 @@ public class AreaService {
     }
 
     public int deleteCtrler(int ctrlerNo) {
-        //节点、区域的删除通过数据库触发器实现
-        //int nodesResult = nodeInfoDAO.deleteByCtrlerNo(ctrlerNo);
-        //int areasResult = areaInfoDAO.deleteByCtrlerNo(ctrlerNo);
-        //int atrlerResult = ctrlerInfoDAO.deleteCtrler(ctrlerNo);
-        return ctrlerInfoDAO.deleteCtrler(ctrlerNo);
+        //删除常规数据
+        int r1 = regularDataDAO.deleteByCtrlerNo(ctrlerNo);
+        //删除节点日报
+        int r2 = reportDailyNodeDAO.deleteNodeReportByCtrlerNo(ctrlerNo);
+        //删除节点信息
+        int r3 = nodeInfoDAO.deleteByCtrlerNo(ctrlerNo);
+
+        //删除区域报警参数
+        int r4 = alertInfoDAO.deleteAlertParaByCtrlerNo(ctrlerNo);
+        //删除区域报警信息
+        int r5 = alertInfoDAO.deleteAlertInfoByCtrlerNo(ctrlerNo);
+        //删除区域日报
+        int r6 = reportDailyAreaDAO.deleteAreaReportByCtrlerNo(ctrlerNo);
+        //删除区域信息
+        int r7 = areaInfoDAO.deleteByCtrlerNo(ctrlerNo);
+
+        //删除控制器信息
+        int r8 = ctrlerInfoDAO.deleteCtrler(ctrlerNo);
+        return r8;
     }
 
     public List<Object> areasView(int ctrlerNo) {
@@ -132,8 +154,13 @@ public class AreaService {
                     double te = (newData.getTempEnv() == null) ? 0 : newData.getTempEnv();
                     double hu = (newData.getHumidity() == null) ? 0 : newData.getHumidity();
 
-                    double dtm = tm - oldData.getTempMed();
-                    double dte = te - oldData.getTempEnv();
+                    double dtm = 0.0 , dte = 0.0;
+                    if(tm != Variables.ERROR_TMP && oldData.getTempMed() != Variables.ERROR_TMP) {
+                        dtm = tm - oldData.getTempMed();
+                    }
+                    if(te != Variables.ERROR_TMP && oldData.getTempEnv() != Variables.ERROR_TMP) {
+                        dte = te - oldData.getTempEnv();
+                    }
 
                     if (tm != Variables.ERROR_TMP) {
                         // 最小值初始化
@@ -289,4 +316,18 @@ public class AreaService {
         this.systemDAO = systemDAO;
     }
 
+    @Resource
+    public void setReportDailyNodeDAO(ReportDailyNodeDAO reportDailyNodeDAO) {
+        this.reportDailyNodeDAO = reportDailyNodeDAO;
+    }
+
+    @Resource
+    public void setReportDailyAreaDAO(ReportDailyAreaDAO reportDailyAreaDAO) {
+        this.reportDailyAreaDAO = reportDailyAreaDAO;
+    }
+
+    @Resource
+    public void setAlertInfoDAO(AreaAlertInfoDAO alertInfoDAO) {
+        this.alertInfoDAO = alertInfoDAO;
+    }
 }

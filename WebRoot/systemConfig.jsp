@@ -147,6 +147,17 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 							<h3 class="form-section">短信设备设置</h3>
 								<div class="row-fluid">
 								  <div class="span4">
+									<div class="control-group">
+										<label class="control-label">短信功能：</label>
+										<div class="controls">
+											<label class="checkbox inline">
+												<input type="checkbox" value="" id="smsAlert"> 启用短信报警发送
+											</label>
+										</div>
+									</div>
+								  </div>
+
+								  <div class="span4">
 											<div class="control-group">
 												<label class="control-label">短信猫COM端口：</label>
 												<div class="controls">
@@ -196,7 +207,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 								  <div class="span6">
 									<div class="control-group">
 				                       <!--ie8, ie9 does not support html5 placeholder, so we just show field title for that-->
-				                       <label class="control-label">系统功能（是否采集）：</label>
+				                       <label class="control-label">系统功能：</label>
 				                       <%--<div class="controls">--%>
 					                     <%--<label class="radio">--%>
 						                      <%--<input id="showHumidity0" type="radio" name="showHumidity" value="0">不显示--%>
@@ -217,10 +228,6 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 											</label>
 											<label class="checkbox inline">
 												<input type="checkbox" value="" id="showSmogAlert"> 烟雾报警
-											</label>
-
-											<label class="checkbox inline">
-												<input type="checkbox" value="" id="smsAlert"> 短信报警发送
 											</label>
 										</div>
 			                         </div>

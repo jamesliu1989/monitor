@@ -92,7 +92,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 				</div>
 				<!-- END PAGE HEADER-->
 				<!-- BEGIN PAGE CONTENT-->  
-				<form action="alertAction_getUnReadByNodeTime">
+				<form id="alert_form" action="alertAction_getUnReadByNodeTime" method="post">
 				<div class="row-fluid">
 					<div class="span12">
 						<div class="form-inline">
@@ -151,16 +151,16 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 								<div class="caption"><i class="icon-table"></i>节点信息</div>
 								<div class="actions">
 									<div class="btn-group">
-										<a class="btn green" href="#" data-toggle="dropdown">
-										<i class="icon-cogs"></i> 工具
-										<i class="icon-angle-down"></i>
+										<a class="btn green" onclick="relieveAlertByNodeNo()">
+										<i class="icon-cogs"></i> 解除所有
+										<%--<i class="icon-angle-down"></i>--%>
 										</a>
-										<ul class="dropdown-menu pull-right">
-											<li><a onclick="javascript:print();">
-										        <i class="icon-print"></i> 打印</a></li>
-											<li><a href="#"><i class=" icon-download-alt"></i> 导出到EXCEL</a></li>
-											<li class="divider"></li>
-										</ul>
+										<%--<ul class="dropdown-menu pull-right">--%>
+											<%--<li><a onclick="javascript:print();">--%>
+										        <%--<i class="icon-print"></i> 打印</a></li>--%>
+											<%--&lt;%&ndash;<li><a href="#"><i class=" icon-download-alt"></i> 导出到EXCEL</a></li>&ndash;%&gt;--%>
+											<%--<li class="divider"></li>--%>
+										<%--</ul>--%>
 									</div>
 								</div>
 							</div>
@@ -282,6 +282,24 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	    		}
 	    	});
 	    }
+
+		//解除所有报警按钮
+		function relieveAlertByNodeNo(){
+            var nodeNo = $('#nodeNo_s').val();
+			if(nodeNo != null && nodeNo != '-1'){
+				$.post('json/alertAction_relieveAlertByNodeNo', {nodeNo:nodeNo}, function(data){
+					if(data >= 1){
+						alert("节点 "+ nodeNo +" 报警解除成功！");
+						$('#alert_form').submit();
+					}else{
+						alert("节点 "+ nodeNo +" 报警解除失败！");
+					}
+				});
+			}else{
+				alert("请选择节点!");
+			}
+
+		}
 	    
 	    function formCheck(){
 	    	if($("#ctrlerNo_s").val() == '-1'){

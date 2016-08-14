@@ -81,7 +81,7 @@ public class AreaInfoDAO{
 		log.debug("getting AreaInfo instance with id: " + id);
 		try {
 			AreaInfo instance = (AreaInfo) sessionFactory.getCurrentSession().get(
-					"com.nju.iip.model.AreaInfo", id);
+					"com.nju.monitor.model.AreaInfo", id);
 			return instance;
 		} catch (RuntimeException re) {
 			log.error("get failed", re);

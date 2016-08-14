@@ -348,4 +348,16 @@ public class NodeInfoDAO {
 	}
 
 
+	public int updateAreaNo(String areaNo, String newAreaNo) {
+		try {
+			String queryString = "update NodeInfo set areaNo =:newAreaNo where areaNo =:areaNo";
+			Query queryObject = sessionFactory.getCurrentSession().createQuery(queryString);
+			queryObject.setString("newAreaNo", newAreaNo)
+					.setString("areaNo", areaNo);
+			return queryObject.executeUpdate();
+		} catch (RuntimeException re) {
+			log.error("updateNode failed", re);
+			throw re;
+		}
+	}
 }

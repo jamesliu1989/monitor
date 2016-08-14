@@ -131,7 +131,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 										</a>
 										<ul class="dropdown-menu pull-right">
 											<li><a onclick="javascript:print();"><i class="icon-print"></i> 打印</a></li>
-											<li><a href="#"><i class=" icon-download-alt"></i> 导出到EXCEL</a></li>
+											<%--<li><a href="#"><i class=" icon-download-alt"></i> 导出到EXCEL</a></li>--%>
 											<li class="divider"></li>
 										</ul>
 									</div>
@@ -144,20 +144,30 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 									        <th colspan="16">${month}&nbsp;节点温度日报表（${nodeNo}）</th>
 									    </tr>
 										<tr>
-											<th style="width:90px;">日期</th>																				
+											<th style="width:90px;">日期</th>
+											<s:if test="#session.config.showTempMed == true">
 											<th>介质温度最大值（℃）</th>
 											<th>介质温度最小值（℃）</th>
 											<th>介质温度均值（℃）</th>
+											</s:if>
+											<s:if test="#session.config.showTempEnv == true">
 											<th>环境温度最大值（℃）</th>
 											<th>环境温度最小值（℃）</th>
 											<th>环境温度均值（℃）</th>
+											</s:if>
+											<s:if test="#session.config.showTempMed == true && #session.config.showTempEnv == true">
 											<th>温差绝对值（℃）</th>
+											</s:if>
+											<s:if test="#session.config.showHumidity == true">
 											<th>湿度最大值（%RH）</th>
 											<th>湿度最小值（%RH）</th>
 											<th>湿度平均值（%RH）</th>
+											</s:if>
 											<th>电池电压（V）</th>
 											<th>无线信号（dB）</th>
+											<s:if test="#session.config.showSmogAlert == true">
 											<th>烟雾报警</th>
+											</s:if>
 											<th>工作状态</th>
 											<th>有无报警</th>
 										</tr>
@@ -166,18 +176,27 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 									<s:iterator value="%{reportDailyNodes}" id="report">
 										<tr>
 											<td>${report.dayOfYear}</td>
+											<s:if test="#session.config.showTempMed == true">
 											<td>${report.tempMedMax}</td>
 											<td>${report.tempMedMin}</td>
 											<td>${report.tempMedAvg}</td>
+											</s:if>
+											<s:if test="#session.config.showTempEnv == true">
 											<td>${report.tempEnvMax}</td>
 											<td>${report.tempEnvMin}</td>
-											<td>${report.tempEnvAvg}</td>											
+											<td>${report.tempEnvAvg}</td>
+											</s:if>
+											<s:if test="#session.config.showTempMed == true && #session.config.showTempEnv == true">
 											<td>${report.tempDevAbs}</td>
+											</s:if>
+											<s:if test="#session.config.showHumidity == true">
 											<td>${report.humidityMax}</td>
 											<td>${report.humidityMin}</td>
 											<td>${report.humidityAvg}</td>
+											</s:if>
 											<td>${report.batteryVol}</td>
 											<td>${report.wirelessSig}</td>
+											<s:if test="#session.config.showSmogAlert == true">
 											<td>
 											 <s:if test="#report.smogAlert == 1">
 											    <span class="label label-success">无</span>
@@ -186,6 +205,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 											    <span class="label label-important">有</span>
 											 </s:else>
 											 </td>
+											</s:if>
 											<td>
 											 <s:if test="#report.status == 1">
 											    <span class="label label-success">在线</span>
