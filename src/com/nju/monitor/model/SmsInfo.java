@@ -38,6 +38,8 @@ public class SmsInfo implements java.io.Serializable {
 	private String type10;
 	private String type11;
 	private String type12;
+	private String type13;
+	private String type14;
 
 
 	// Constructors
@@ -50,7 +52,7 @@ public class SmsInfo implements java.io.Serializable {
 	public SmsInfo(Integer id, String smsTemplate, String type1, String type2,
 			String type3, String type4, String type5, String type6,
 			String type7, String type8, String type9, String type10,
-			String type11, String type12) {
+			String type11, String type12, String type13, String type14) {
 		super();
 		this.id = id;
 		this.smsTemplate = smsTemplate;
@@ -66,6 +68,8 @@ public class SmsInfo implements java.io.Serializable {
 		this.type10 = type10;
 		this.type11 = type11;
 		this.type12 = type12;
+		this.type13 = type13;
+		this.type14 = type14;
 	}
 
 	// Property accessors
@@ -145,6 +149,17 @@ public class SmsInfo implements java.io.Serializable {
 		return type12;
 	}
 
+	@Column(name = "TYPE13")
+	public String getType13() {
+		return type13;
+	}
+
+	@Column(name = "TYPE14")
+	public String getType14() {
+		return type14;
+	}
+
+
 	public void setSmsTemplate(String smsTemplate) {
 		this.smsTemplate = smsTemplate;
 	}
@@ -196,5 +211,11 @@ public class SmsInfo implements java.io.Serializable {
 	public void setType12(String type12) {
 		this.type12 = type12;
 	}
+
+	public void setType13(String type13) {
+		this.type13 = type13;
+	}
+
+	public void setType14(String type14) {this.type14 = type14;}
 
 }

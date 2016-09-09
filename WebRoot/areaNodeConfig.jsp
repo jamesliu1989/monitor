@@ -186,8 +186,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 				<label class="control-label visible-ie8 visible-ie9">节点描述</label>
 				<div class="controls">
 					<div class="input-icon left">
-						<i class="icon-edit"></i>
-						<input class="m-wrap placeholder-no-fix" type="text" placeholder="节点描述" name="nodeInfo.nodeDesc" style="width:289px; height:34px;">
+						<textarea  class="m-wrap placeholder-no-fix" rows="2" placeholder="节点描述" name="nodeInfo.nodeDesc" style="width:289px;"></textarea>
 					<span class="required">*</span>
 					</div>
 				</div>
@@ -284,7 +283,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		  $("#edit_modal input[name='nodeInfo.nodeNo']").val(nodeNo);
 		  $("#edit_modal input[name='nodeInfo.nodeName']").val(nodeName);
 		  $("#edit_modal input[name='nodeInfo.nodeDesc']").val(nodeDesc);
-			if(status == '正常'){
+			if(status == '启用'){
 				$("#edit_modal input[name='nodeInfo.status']:eq(1)").parent('span').removeClass('checked');
 				$("#edit_modal input[name='nodeInfo.status']:eq(0)").parent('span').addClass('checked');
 				$("#edit_modal input[name='nodeInfo.status']:eq(0)").attr("checked",'checked');
@@ -300,7 +299,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		  var areaNo = $("#edit_modal select[name='nodeInfo.areaNo']").val();
 		  var nodeNo = $("#edit_modal input[name='nodeInfo.nodeNo']").val();
 		  var nodeName = $("#edit_modal input[name='nodeInfo.nodeName']").val();
-		  var nodeDesc = $("#edit_modal input[name='nodeInfo.nodeDesc']").val();
+		  var nodeDesc = $("#edit_modal textarea[name='nodeInfo.nodeDesc']").val();
 		  var status = $("#edit_modal input[name='nodeInfo.status']:checked").val();
 		  
           $.post('json/nodeAction_updateNode', {
@@ -349,7 +348,16 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 				     $('#ctrlerNo_s').append(options);				     
 				  }
 		   });
-		   
+
+			$.post('json/areaAction_areaConfig', {ctrlerNo:-1}, function(data){
+				if(data.length>0){
+					var options = "";
+					for(var i=0;i<data.length;i++){
+						options +='<option value="'+data[i][0]+'">'+data[i][1]+'</option>';
+					}
+					$('#areaName_s').append(options);
+				}
+			})
 
 	  
 	  $('#subbtn').click(function(){			
@@ -377,9 +385,9 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 						   for (var i = 0; i < data[j].length; i++) {
 							   var status = data[j][i].status;
 							   if (status == '0') {
-								   status = '已停用';
+								   status = '停用';
 							   } else {
-								   status = '正常';
+								   status = '启用';
 							   }
 							   $("#sample_editable_1 tbody").append(
 									   '<tr>' +

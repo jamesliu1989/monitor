@@ -105,14 +105,14 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 						<form id="reportForm" class="form-inline" action="areaAction_areaAlertParameter">						
 							<label class="control-label">控制器号：</label> 
 							<select id="ctrlerNo_s" style="width:80px;height:28px;" name="ctrlerNo">
-								<option value="-1">全选</option>
+								<option value="-1">选择</option>
 							</select>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 							<label class="control-label">区域名称：</label> 
 							<select id="areaName_s"
 								style="width:100px;height:28px;" name="areaNo">
 								<option value="-1">全部区域</option>
 							</select>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-							<button class="btn btn-primary" id="subbtn">
+							<button class="btn btn-primary" id="subbtn" onclick="return slect_check()">
 								<i class="icon-search icon-white"></i>&nbsp;查询
 							</button>
 						</form>
@@ -239,6 +239,12 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	<script src="media/js/jquery.jqprint-0.3.js" type="text/javascript"></script> 
 	<script src="media/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script>
+		function slect_check(){
+			if($('#ctrlerNo_s').val() == -1){
+				alert("请选择控制器号！");
+				return false
+			}
+		}
 	    function print(){
 	    	$('.table').jqprint();
 	    }
@@ -435,7 +441,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 					   }
 				  };
 		   });
-		   
+
 		   //获取区域选择框类容 
 		   function getAreas(ctrlerNo){
 			   $('#areaName_s').html('');

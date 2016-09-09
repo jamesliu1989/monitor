@@ -47,7 +47,7 @@ public class NodeAction extends ActionSupport implements ServletRequestAware, Se
 		
     public String nodeView(){
     	dataList = new ArrayList<>();
-            if(ctrlerNo == -1 || (areaNo != null && areaNo.equals("-1"))){
+            if(areaNo != null && areaNo.equals("-1")){
     			List<AreaInfo> areaList = areaService.findAll(ctrlerNo);
     			for(AreaInfo areaInfo : areaList){
         			List<NodeInfo> dataList_t = nodeService.findByAreaNo(areaInfo.getAreaNo());

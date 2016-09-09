@@ -201,17 +201,21 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	                }	
 	                jqTds[3].innerHTML = '<input type="text" class="m-wrap small" value="' + aData[3] + '" style="height: 30px;">';
 					jqTds[4].innerHTML = '<div class="controls" id="status">' +
-							'<label class="radio"><input type="radio" name="status" value="1" checked="checked">启用</label>' +
-							'<label class="radio"><input type="radio" name="status" value="0" checked="">停用</label>' +
+							'<label class="radio"><input type="radio" name="status" value="1" checked="">启用</label>' +
+							'<label class="radio"><input type="radio" name="status" value="0" checked="checked">停用</label>' +
 							'</div>';
-					if(aData[4] == '正常' || aData[4] == ''){
-						$("#status input[name='status']:eq(1)").parent('span').removeClass('checked');
-						$("#status input[name='status']:eq(0)").parent('span').addClass('checked');
-						$("#status input[name='status']:eq(0)").attr("checked",'checked');
-					}else{
+					if(aData[4] == '停用' || aData[4] == ''){
 						$("#status input[name='status']:eq(0)").parent('span').removeClass('checked');
 						$("#status input[name='status']:eq(1)").parent('span').addClass('checked');
 						$("#status input[name='status']:eq(1)").attr("checked",'checked');
+					}else{
+						$("#status input[name='status']:eq(1)").parent('span').removeClass('checked');
+						$("#status input[name='status']:eq(0)").parent('span').addClass('checked');
+						$("#status input[name='status']:eq(0)").attr("checked",'checked');
+					}
+					if(aData[4] == ''){
+						$("#status input[name='status']:eq(0)").attr("disabled",'true');
+						$("#status input[name='status']:eq(1)").attr("disabled",'true');
 					}
 	                jqTds[5].innerHTML = '<span class="label label-success"><a class="edit" href="">保存</a></span>';
 	            }
@@ -219,7 +223,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	            function saveRow(oTable, nRow, status) {
 	                var jqInputs = $('input', nRow);
 	                oTable.fnUpdate(jqInputs[0].value, nRow, 3, false);
-					oTable.fnUpdate(status == 1 ? '正常' : '已停用', nRow, 4, false);
+					oTable.fnUpdate(status == 1 ? '启用' : '停用', nRow, 4, false);
 	                oTable.fnUpdate('<a class="edit" href=""><span class="label label-success">编辑</span></a>', nRow, 5, false);
 	                oTable.fnUpdate('<a class="delete" href=""><span class="label label-warning">删除</span></a>', nRow, 6, false);
 	                oTable.fnDraw();
@@ -376,9 +380,9 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			   for(var i=0;i<data.length;i++){
 			   	var status = data[i]['status'];
 				   if(status == '0'){
-					   status = '已停用';
+					   status = '停用';
 				   }else{
-					   status = '正常';
+					   status = '启用';
 				   }
 				$("#sample_editable_1 tbody").append(
 				'<tr>'+

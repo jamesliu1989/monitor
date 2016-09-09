@@ -58,7 +58,10 @@ public class AlertAction extends ActionSupport implements ServletRequestAware, S
 	 * @return
 	 */
 	public String getUnRead(){
-		alerts = alertService.findUnRead();		
+		alerts = alertService.findUnRead();
+		ctrlerNo = -1;
+		areaNo = "-1";
+		nodeNo = "-1";
 		return "alertView";
 	}
 	

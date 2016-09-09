@@ -106,9 +106,14 @@ public class AreaInfoDAO{
 
 	public List getNameAndNo(int ctrlerNo){
 		try {
-			String queryString = "select areaNo, areaName from AreaInfo where ctrlerNo = ? order by areaNo asc";
+			String queryString = "";
+			if(ctrlerNo == -1){
+				queryString = "select areaNo, areaName from AreaInfo order by areaNo asc";
+			}else{
+				queryString = "select areaNo, areaName from AreaInfo where ctrlerNo = "+ ctrlerNo +" order by areaNo asc";
+			}
 			Query queryObject = sessionFactory.getCurrentSession().createQuery(queryString);
-			return queryObject.setInteger(0, ctrlerNo).list();
+			return queryObject.list();
 		} catch (RuntimeException re) {
 			throw re;
 		}

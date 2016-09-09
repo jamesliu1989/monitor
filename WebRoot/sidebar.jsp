@@ -86,7 +86,7 @@
 							<i class="icon-edit"></i> 区域管理</a>
 						</li>
 						<li id="menu63">
-							<a href="areaAction_areaAlertParameter">
+							<a href="areaPrmConfig.jsp">
 							<i class="icon-cogs"></i> 区域报警参数设置</a>
 						</li>
 						<li id="menu64">

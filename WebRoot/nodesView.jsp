@@ -96,7 +96,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 							<label class="control-label">区域名称：</label> 
 							<select id="areaName_s"
 								style="width:100px;height:28px;" name="areaNo">
-								<option value="-1">选择区域</option>
+								<option value="-1">全部区域</option>
 							</select>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 							<button class="btn btn-primary" id="subbtn">
 								<i class="icon-search icon-white"></i>&nbsp;查询
@@ -223,7 +223,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	    function print(){
 	    	$('.table').jqprint();
 	    }
-		jQuery(document).ready(function() {       
+jQuery(document).ready(function() {
 		   // initiate layout and plugins
 		   App.init();
 		   
@@ -236,6 +236,16 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 				     $('#ctrlerNo_s').append(options);
 				  }
 		   });
+
+			$.post('json/areaAction_areaConfig', {ctrlerNo:-1}, function(data){
+				if(data.length>0){
+					var options = "";
+					for(var i=0;i<data.length;i++){
+						options +='<option value="'+data[i][0]+'">'+data[i][1]+'</option>';
+					}
+					$('#areaName_s').append(options);
+				}
+			});
 		   
 		   //获取区域选择框类容 
 		   function getAreas(ctrlerNo){
@@ -363,6 +373,8 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			    }
 		   });
        });
+
+	$('#subbtn').click()
 });
 </script>
 </body>

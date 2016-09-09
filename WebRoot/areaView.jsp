@@ -143,7 +143,9 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 											<s:if test="#session.config.showTempMed == true && #session.config.showTempEnv == true">
 											<th colspan="3">节点（℃）</th>
 											</s:if>
-											<th rowspan="2">报警</th>
+											<s:if test="#session.config.showSmogAlert == true">
+											<th rowspan="2">烟雾报警</th>
+											</s:if>
 										</tr>
 										<tr>
 											<s:if test="#session.config.showTempMed == true">
@@ -254,15 +256,23 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 				     $('#ctrlerNo_s').append(options);
 				  }
 		   });
-	$('#subbtn').click(function(){	
-		   $("#areaViewTable tbody").html('');
-		   $('#ajaxLoading').css('display', 'block');  //显示loading图片
+	$('#subbtn').click(function(){
 		   var ctrlerNo = $('#ctrlerNo_s').val();
+		   if(ctrlerNo == '-1'){
+		   	   alert("请选择控制器号！")
+			   return;
+		   }
+		  $("#areaViewTable tbody").html('');
+		  $('#ajaxLoading').css('display', 'block');  //显示loading图片
 		   //获取区域监测信息
 		   $.post('json/areaAction_areasView',{ctrlerNo:ctrlerNo},function(data){
 				  if(data.length>0){
-				   var alert = '正常', alertLabel = 'label-success', alertIcon = 'icon-bullhorn';
+
 				   for(var i=0; i<data.length;i++){
+				   	var alert = '无', alertLabel = 'label-success', alertIcon = 'icon-bullhorn';
+				   	if(data[i].alert == 0){
+						alert = '有', alertLabel = 'label-important', alertIcon = 'icon-bullhorn';
+					}
 					   $("#areaViewTable tbody").append(
 					      '<tr>'+
 					          '<td>'+ (i+1) +'</td>'+
@@ -298,7 +308,9 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 						      '<td>'+ data[i].tempDevMin +'</td>'+						      
 						      '<td>'+ data[i].tempDevAvg +'</td>'+
 							</s:if>
+						  <s:if test="#session.config.showSmogAlert == true">
 						      '<td><span class="label '+ alertLabel +'"><i class="'+ alertIcon +'"></i>&nbsp;'+ alert +'</span></td>'+
+						  </s:if>
 					      '</tr>');					  
 				   }
 			    }

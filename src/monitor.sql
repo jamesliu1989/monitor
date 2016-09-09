@@ -286,4 +286,10 @@ ALTER TABLE `monitor`.`sms_info`
 ALTER TABLE `monitor`.`system`
   ADD COLUMN `SMS_ALERT` TINYINT(1) NULL DEFAULT 0 AFTER `SHOW_SMOG_ALERT`;
 
+ALTER TABLE `monitor`.`sms_info`
+  ADD COLUMN `TYPE14` VARCHAR(50) NULL AFTER `TYPE13`;
+
+UPDATE `monitor`.`sms_info` SET `TYPE14`='烟雾报警' WHERE `ID`='1';
+
+
  

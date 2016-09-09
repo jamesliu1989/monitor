@@ -140,8 +140,9 @@ public class AreaService {
             double tempMedMax = 0.0, tempMedMin = 0.0, tempMedSum = 0.0, tempEnvMax = 0.0, tempEnvMin = 0.0, tempEnvSum = 0.0;
             double humidityMax = 0.0, humidityMin = 0.0, humiditySum = 0.0;
             double deltaMedMax = 0.0, deltaMedMin = 0.0, deltaMedSum = 0.0, deltaEnvMax = 0.0, deltaEnvMin = 0.0, deltaEnvSum = 0.0;
-            int count = 0, tmCount = 0, teCount = 0, huCount = 0; //use for error data condition;
-            int alert = 0;
+            double tempDevMax = 0.0, tempDevMin = 0.0, tempDevSum = 0.0;
+            int count = 0, tmCount = 0, teCount = 0, huCount = 0, tmpDevCount = 0; //use for error data condition;
+            int alert = 1;   //0：烟雾报警 1：无烟雾报警
             //拿到各个区域里面最新的实时数据
             List<NodeInfo> nodeInfos = nodeInfoDAO.findByAreaNo(area[0]);
             for (NodeInfo node : nodeInfos) {
@@ -224,8 +225,24 @@ public class AreaService {
                         huCount--;
                     }
 
+                    if (tm != Variables.ERROR_TMP && te != Variables.ERROR_TMP) {
+                        double tmpDev = tm - te;
+                        if(tmpDev > tempDevMax){
+                            tempDevMax = tmpDev;
+                        }
+                        if(tmpDev < tempDevMin){
+                            tempDevMin = tmpDev;
+                        }
+                        tempDevSum += tmpDev;
+                    }else{
+                        tmpDevCount--;
+                    }
+
                     newData.setStatus(node.getStatus());
-                    alert = newData.getSmogAlert();
+                    if(newData.getSmogAlert() == 0){
+                        alert = 0;
+                    }
+
                 }
             }
             areaMap.put("tempMedMax", tempMedMax);
@@ -261,9 +278,9 @@ public class AreaService {
             areaMap.put("humidityAvg", df.format(humidityAvg));
 
             //节点
-            areaMap.put("tempDevMax", df.format(Math.abs(tempMedMax - tempEnvMax)));
-            areaMap.put("tempDevMin", df.format(Math.abs(tempMedMin - tempEnvMin)));
-            areaMap.put("tempDevAvg", df.format(Math.abs(tempMedAvg - tempEnvAvg)));
+            areaMap.put("tempDevMax", df.format(Math.abs(tempDevMax)));
+            areaMap.put("tempDevMin", df.format(Math.abs(tempDevMin)));
+            areaMap.put("tempDevAvg", df.format(Math.abs(((tempDevSum == 0) ? 0.0 : tempDevSum / (count + tmpDevCount)))));
 
             areaMap.put("alert", alert);
             resultList.add(areaMap);

@@ -56,7 +56,7 @@ public class RegularDataService
 		List<Object> resultList = new ArrayList<Object>();
 		List<AreaInfo> areaList = null;
 		//获取所有控制器所有区域
-		if(ctrlerNo == -1){
+		if(ctrlerNo == -1  && areaNo.equals("-1")){
 			areaList = areaInfoDAO.findAll();
 		}
 		//获取某控制器所有区域

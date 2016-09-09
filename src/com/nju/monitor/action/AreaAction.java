@@ -91,6 +91,9 @@ public class AreaAction extends ActionSupport implements ServletRequestAware, Se
 		//生成控制器未分区域
 		String defaultAreaNo = "C"+ctrlerNo+"-未分区域";
 		areaService.add(new AreaInfo(defaultAreaNo, "未分区域", ctrlerNo, "未分区域"));
+		//未分区域添加默认报警参数
+		areaParamaterService.add(new AreaAlertParameter(defaultAreaNo, 1));
+		areaParamaterService.add(new AreaAlertParameter(defaultAreaNo, 2));
 		//自动添加节点
 		for(int i = 0; i<nodeNum; i++){
 			String nodeNo = "C"+ctrlerNo+"-"+i;

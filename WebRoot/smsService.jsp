@@ -129,7 +129,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 								  <div class="span4">
 									<div class="control-group">
 				                       <!--ie8, ie9 does not support html5 placeholder, so we just show field title for that-->
-				                       <label class="control-label">通讯异常：</label>
+				                       <label class="control-label">温度采集异常：</label>
 				                       <div class="controls">
 					                     <label class="radio">
 						                      <input type="radio" name="smsTemplateType.type1" value="0" <s:if test="%{smsTemplateType.type1==0}">checked</s:if>>停用
@@ -341,6 +341,30 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 									</div>
 								</div>
 							</div>
+									<div class="row-fluid">
+										<div class="span4">
+											<div class="control-group">
+												<!--ie8, ie9 does not support html5 placeholder, so we just show field title for that-->
+												<label class="control-label">湿度采集异常：</label>
+												<div class="controls">
+													<label class="radio">
+														<input type="radio" name="smsTemplateType.type13" value="0" <s:if test="%{smsTemplateType.type13==0}">checked</s:if>>停用
+													</label>
+													<label class="radio">
+														<input type="radio" name="smsTemplateType.type13" value="1" <s:if test="%{smsTemplateType.type13==1}">checked</s:if>>启用
+													</label>
+												</div>
+											</div>
+										</div>
+										<div class="span8">
+											<div class="control-group">
+												<label class="control-label">内容措辞：</label>
+												<div class="controls">
+													<input class="span6 m-wrap" name="smsTemplate.type13" type="text" value="${smsTemplate.type13}">
+												</div>
+											</div>
+										</div>
+									</div>
 							<div class="row-fluid">
 								  <div class="span4">
 									<div class="control-group">
@@ -410,6 +434,30 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 												<div class="controls">
 												<input class="span6 m-wrap" name="smsTemplate.type12" type="text" value="${smsTemplate.type12}">	
 												</div>
+									</div>
+								</div>
+							</div>
+							<div class="row-fluid">
+								<div class="span4">
+									<div class="control-group">
+										<!--ie8, ie9 does not support html5 placeholder, so we just show field title for that-->
+										<label class="control-label">烟雾报警：</label>
+										<div class="controls">
+											<label class="radio">
+												<input id="showHumidity0" type="radio" name="smsTemplateType.type14" value="0" <s:if test="%{smsTemplateType.type14==0}">checked</s:if>>停用
+											</label>
+											<label class="radio">
+												<input id="showHumidity1" type="radio" name="smsTemplateType.type14" value="1" <s:if test="%{smsTemplateType.type14==1}">checked</s:if>>启用
+											</label>
+										</div>
+									</div>
+								</div>
+								<div class="span8">
+									<div class="control-group">
+										<label class="control-label">内容措辞：</label>
+										<div class="controls">
+											<input class="span6 m-wrap" name="smsTemplate.type14" type="text" value="${smsTemplate.type14}">
+										</div>
 									</div>
 								</div>
 							</div>

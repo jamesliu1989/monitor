@@ -90,7 +90,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 						<div id="reportForm" class="form-inline">						
 							<label class="control-label">控制器号：</label> 
 							<select id="ctrlerNo_s" style="width:80px;height:28px;" name="ctrlerNo">
-								<option value="-1">选择</option>
+								<option value="-1">全部</option>
 							</select>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 							<button class="btn btn-primary" id="subbtn">
 								<i class="icon-search icon-white"></i>&nbsp;查询

@@ -98,16 +98,16 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 						<div class="form-inline">
 							<label class="control-label">控制器号：</label> 
 							<select id="ctrlerNo_s" style="width:80px;height:28px;" name="ctrlerNo">
-								<option value="-1">选择</option>
+								<option value="-1">全部</option>
 							</select>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 							<label class="control-label">区域名称：</label> <select id="areaName_s"
 								style="width:100px;height:28px;" name="areaNo">
-								<option value="-1">选择区域</option>
+								<option value="-1">全部区域</option>
 							</select>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 							<label class="control-label">节点编号：</label> 
 							<select id="nodeNo_s"
 								style="width:100px;height:28px;" name="nodeNo">
-								<option value="-1">选择节点</option>
+								<option value="-1">全部节点</option>
 							</select>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 							<label class="radio">
 						        <input id="radio1" type="radio" name="range" value="0" checked>未处理
@@ -367,7 +367,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		 //获取节点选择框类容 
 		   function getNodes(areaNo){
 			   $('#nodeNo_s').html('');
-			   $('#nodeNo_s').append('<option value="-1">选择节点</option>');
+			   $('#nodeNo_s').append('<option value="-1">全部节点</option>');
 			   $.post('json/nodeAction_nodeNo', {areaNo:areaNo} ,function(data){
 					  if(data.length>0){
 						 var options = "";
