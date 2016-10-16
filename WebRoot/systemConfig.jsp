@@ -202,20 +202,12 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 									</div>
 								</div>
 							</div>
-							<h3 class="form-section">其他参数设置</h3>
+<%--							<h3 class="form-section">其他参数设置</h3>
 								<div class="row-fluid">
 								  <div class="span6">
 									<div class="control-group">
 				                       <!--ie8, ie9 does not support html5 placeholder, so we just show field title for that-->
 				                       <label class="control-label">系统功能：</label>
-				                       <%--<div class="controls">--%>
-					                     <%--<label class="radio">--%>
-						                      <%--<input id="showHumidity0" type="radio" name="showHumidity" value="0">不显示--%>
-					                     <%--</label>--%>
-					                     <%--<label class="radio">--%>
-						                      <%--<input id="showHumidity1" type="radio" name="showHumidity" value="1">显示--%>
-					                     <%--</label>--%>
-				                        <%--</div>--%>
 										<div class="controls">
 											<label class="checkbox inline">
 												<input type="checkbox" value="" id="showTempMed"> 介质温度
@@ -231,12 +223,12 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 											</label>
 										</div>
 			                         </div>
-								</div>
-<!-- 								 <div class="span6">
+								</div>--%>
+<!--								 <div class="span6">
 									<div class="control-group">
 												<label class="control-label">端口：</label>
 												<div class="controls">
-												<input class="span6 m-wrap" id="port_number" type="text">	
+												<input class="span6 m-wrap" id="port_number" type="text">
 												</div>
 									</div>
 								</div> -->
@@ -322,10 +314,10 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	    		     'config.smsComPort':smsComPort,
 	    		     'config.smsBaudRate':smsBaudRate,
 	    		     'config.collectCycle':collectCycle,
-					 'config.showTempMed':showTempMed,
+/*					 'config.showTempMed':showTempMed,
 					 'config.showTempEnv':showTempEnv,
 	    		     'config.showHumidity':showHumidity,
-					 'config.showSmogAlert':showSmogAlert,
+					 'config.showSmogAlert':showSmogAlert,*/
 					 'config.smsAlert':smsAlert
 	    		     },
 	        function(data){
@@ -349,11 +341,11 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	    			$('#smsComPort').val(config.smsComPort);
 	    			$('#smsBaudRate').val(config.smsBaudRate);
 					$('#smsAlert').val(config.smsAlert);
-					if(config.showHumidity == 1){
+/*					if(config.showTempMed == 1){
 						$('#showTempMed').attr('checked', true);
 						$('#showTempMed').parents('.checkbox').find('span').addClass('checked');
 					}
-					if(config.showHumidity == 1){
+					if(config.showTempEnv == 1){
 						$('#showTempEnv').attr('checked', true);
 						$('#showTempEnv').parents('.checkbox').find('span').addClass('checked');
 					}
@@ -361,10 +353,10 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 						$('#showHumidity').attr('checked', true);
 						$('#showHumidity').parents('.checkbox').find('span').addClass('checked');
 	    			}
-					if(config.showHumidity == 1){
+					if(config.showSmogAlert == 1){
 						$('#showSmogAlert').attr('checked', true);
 						$('#showSmogAlert').parents('.checkbox').find('span').addClass('checked');
-					}
+					}*/
 					if(config.smsAlert == 1){
 						$('#smsAlert').attr('checked', true);
 						$('#smsAlert').parents('.checkbox').find('span').addClass('checked');

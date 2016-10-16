@@ -140,8 +140,12 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 											<th>节点编号</th>
 											<th>节点名称</th>
 											<th>节点描述</th>
-											<th>状态</th>
-											<th>编辑</th>
+											<th>介质温度</th>
+											<th>环境温度</th>
+											<th>湿度</th>
+											<th>烟雾报警</th>
+											<th>节点状态</th>
+											<th>操作</th>
 										</tr>
 									</thead>
 									<tbody>
@@ -170,23 +174,12 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 					</div>
 				</div>
 			</div>
-			<p><i class="icon-globe"></i>&nbsp;节点名称：</p>	
 			<div class="control-group">
-				<label class="control-label visible-ie8 visible-ie9">节点名称</label>
+				<label class="control-label"><i class="icon-globe"></i>&nbsp;节点名称</label>
 				<div class="controls">
 					<div class="input-icon left">
 						<i class="icon-edit"></i>
 						<input class="m-wrap placeholder-no-fix" type="text" placeholder="节点名称" name="nodeInfo.nodeName" style="width:289px; height:34px;">
-					<span class="required">*</span>
-					</div>
-				</div>
-			</div>
-			<p><i class="icon-file"></i>&nbsp;节点描述：</p>	
-			<div class="control-group">
-				<label class="control-label visible-ie8 visible-ie9">节点描述</label>
-				<div class="controls">
-					<div class="input-icon left">
-						<textarea  class="m-wrap placeholder-no-fix" rows="2" placeholder="节点描述" name="nodeInfo.nodeDesc" style="width:289px;"></textarea>
 					<span class="required">*</span>
 					</div>
 				</div>
@@ -199,10 +192,9 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 					</select>
 				</div>
 			</div>
-			<p><i class="icon-plane"></i>&nbsp;状态：</p>	
 			<div class="control-group">
 				<!--ie8, ie9 does not support html5 placeholder, so we just show field title for that-->
-				<label class="control-label visible-ie8 visible-ie9">状态</label>
+				<label class="control-label"><i class="icon-plane"></i>&nbsp;状态</label>
 				<div class="controls">
 					<label class="radio">
 						  <input type="radio" name="nodeInfo.status" value="1">启用
@@ -210,6 +202,32 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 					<label class="radio">
 						  <input type="radio" name="nodeInfo.status" value="0">停用
 					</label>
+				</div>
+			</div>
+			  <div class="control-group">
+				  <!--ie8, ie9 does not support html5 placeholder, so we just show field title for that-->
+				  <label class="control-label"><i class="icon-wrench"></i>&nbsp;功能设置</label>
+				  <div class="controls">
+					  <label class="checkbox inline">
+						  <input type="checkbox" value="" id="showTempMed" name="nodeInfo.showTempMed"> 介质温度
+					  </label>
+					  <label class="checkbox inline">
+						  <input type="checkbox" value="" id="showTempEnv" name="nodeInfo.showTempEnv"> 环境温度
+					  </label>
+					  <label class="checkbox inline">
+						  <input type="checkbox" value="" id="showHumidity" name="nodeInfo.showHumidity"> 湿度
+					  </label>
+					  <label class="checkbox inline">
+						  <input type="checkbox" value="" id="showSmogAlert" name="nodeInfo.showSmogAlert"> 烟雾报警
+					  </label>
+				  </div>
+			  </div>
+		<div class="control-group">
+			<label class="control-label"><i class="icon-file"></i>&nbsp;节点描述</label>
+			<div class="controls">
+				<div class="input-icon left">
+					<textarea  class="m-wrap placeholder-no-fix" rows="2" placeholder="节点描述" name="nodeInfo.nodeDesc" style="width:289px;"></textarea>
+					<span class="required">*</span>
 				</div>
 			</div>
 		</div>
@@ -265,7 +283,11 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		  var nodeNo = tr.children(':eq(1)').text();
 		  var nodeName = tr.children(':eq(2)').text();
 		  var nodeDesc = tr.children(':eq(3)').text();
-		  var status = tr.children(':eq(4)').text();
+		  var showTempMed = tr.children(':eq(4)').text();
+		  var showTempEnv = tr.children(':eq(5)').text();
+		  var showHumidity = tr.children(':eq(6)').text();
+		  var showSmogAlert = tr.children(':eq(7)').text();
+		  var status = tr.children(':eq(8)').text();
 		  var ctrlerNo = nodeNo.substring(1, nodeNo.indexOf('-'));
 		  //更新区域选择栏
 	      $.post('json/areaAction_areaConfig', {ctrlerNo:ctrlerNo} ,function(data){
@@ -282,16 +304,32 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 
 		  $("#edit_modal input[name='nodeInfo.nodeNo']").val(nodeNo);
 		  $("#edit_modal input[name='nodeInfo.nodeName']").val(nodeName);
+		  if(status == '启用'){
+		      $("#edit_modal input[name='nodeInfo.status']:eq(1)").parent('span').removeClass('checked');
+			  $("#edit_modal input[name='nodeInfo.status']:eq(0)").parent('span').addClass('checked');
+			  $("#edit_modal input[name='nodeInfo.status']:eq(0)").attr("checked",'checked');
+		  }else{
+			  $("#edit_modal input[name='nodeInfo.status']:eq(0)").parent('span').removeClass('checked');
+			  $("#edit_modal input[name='nodeInfo.status']:eq(1)").parent('span').addClass('checked');
+			  $("#edit_modal input[name='nodeInfo.status']:eq(1)").attr("checked",'checked');
+		  }
+		  if(showTempMed == '开启'){
+			  $('#showTempMed').attr('checked', true);
+			  $('#showTempMed').parents('.checkbox').find('span').addClass('checked');
+		  }
+		  if(showTempEnv == '开启'){
+			  $('#showTempEnv').attr('checked', true);
+			  $('#showTempEnv').parents('.checkbox').find('span').addClass('checked');
+		  }
+		  if(showHumidity == '开启'){
+			  $('#showHumidity').attr('checked', true);
+			  $('#showHumidity').parents('.checkbox').find('span').addClass('checked');
+		  }
+		  if(showSmogAlert == '开启'){
+			  $('#showSmogAlert').attr('checked', true);
+			  $('#showSmogAlert').parents('.checkbox').find('span').addClass('checked');
+		  }
 		  $("#edit_modal input[name='nodeInfo.nodeDesc']").val(nodeDesc);
-			if(status == '启用'){
-				$("#edit_modal input[name='nodeInfo.status']:eq(1)").parent('span').removeClass('checked');
-				$("#edit_modal input[name='nodeInfo.status']:eq(0)").parent('span').addClass('checked');
-				$("#edit_modal input[name='nodeInfo.status']:eq(0)").attr("checked",'checked');
-			}else{
-				$("#edit_modal input[name='nodeInfo.status']:eq(0)").parent('span').removeClass('checked');
-				$("#edit_modal input[name='nodeInfo.status']:eq(1)").parent('span').addClass('checked');
-				$("#edit_modal input[name='nodeInfo.status']:eq(1)").attr("checked",'checked');
-			}
 	  };
 	  
 	  function nodeSave(){
@@ -301,6 +339,11 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		  var nodeName = $("#edit_modal input[name='nodeInfo.nodeName']").val();
 		  var nodeDesc = $("#edit_modal textarea[name='nodeInfo.nodeDesc']").val();
 		  var status = $("#edit_modal input[name='nodeInfo.status']:checked").val();
+
+		  var showTempMed = $("#edit_modal input[name='nodeInfo.showTempMed']").is(':checked');
+		  var showTempEnv = $("#edit_modal input[name='nodeInfo.showTempEnv']").is(':checked');
+		  var showHumidity = $("#edit_modal input[name='nodeInfo.showHumidity']").is(':checked');
+		  var showSmogAlert = $("#edit_modal input[name='nodeInfo.showSmogAlert']").is(':checked');
 		  
           $.post('json/nodeAction_updateNode', {
         	 'nodeInfo.areaNo':areaNo,
@@ -308,6 +351,11 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
  	         'nodeInfo.nodeName':nodeName,
  	         'nodeInfo.nodeDesc':nodeDesc,
  	         'nodeInfo.status':status,
+			 'nodeInfo.showTempMed':showTempMed,
+			 'nodeInfo.showTempEnv':showTempEnv,
+			 'nodeInfo.showHumidity':showHumidity,
+			 'nodeInfo.showSmogAlert':showSmogAlert,
+
  	          },function(data){
  	              if(data==1){	
  	            	   $('#edit_modal').modal('hide');
@@ -380,23 +428,27 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 						   $("#sample_editable_1 tbody").append(
 								   '<tr id="desc" style="color:#666;background-color: #D4E7F9;">' +
 								   '<td colspan="2"><i class="icon-globe"></i>&nbsp;控制器-区域：' + data[j][0].areaNo + '</td>' +
-								   '<td colspan="4"><i class="icon-edit"></i>&nbsp;区域描述：' + data[j][0].areaDesc + '</td>' +
+								   '<td colspan="8"><i class="icon-edit"></i>&nbsp;区域描述：' + data[j][0].areaDesc + '</td>' +
 								   '</tr>');
 						   for (var i = 0; i < data[j].length; i++) {
-							   var status = data[j][i].status;
+/*							   var status = data[j][i].status;
 							   if (status == '0') {
 								   status = '停用';
 							   } else {
 								   status = '启用';
-							   }
+							   }*/
 							   $("#sample_editable_1 tbody").append(
 									   '<tr>' +
 									   '<td>' + (index++) + '<input type="hidden" value="' + data[j][i].areaNo + '"></td>' +
 									   '<td>' + data[j][i].nodeNo + '</td>' +
 									   '<td>' + data[j][i].nodeName + '</td>' +
 									   '<td>' + data[j][i].nodeDesc + '</td>' +
-									   '<td>' + status + '</td>' +
-									   '<td><a class="edit" href="#edit_modal" data-toggle="modal" onclick="nodeEdit(this)"><span class="label label-success">编辑</span></a></td>' +
+									   '<td>' + (data[j][i].showTempMed == '0' ? "<span class='label label-important'>关闭</span>" : "<span class='label label-success'>开启</span>")+ '</td>' +
+									   '<td>' + (data[j][i].showTempEnv == '0' ? "<span class='label label-important'>关闭</span>" : "<span class='label label-success'>开启</span>") + '</td>' +
+									   '<td>' + (data[j][i].showHumidity == '0' ? "<span class='label label-important'>关闭</span>" : "<span class='label label-success'>开启</span>") + '</td>' +
+									   '<td>' + (data[j][i].showSmogAlert == '0' ? "<span class='label label-important'>关闭</span>" : "<span class='label label-success'>开启</span>") + '</td>' +
+									   '<td>' + (data[j][i].status == '0' ? "<span class='label label-important'>停用</span>" : "<span class='label label-success'>启用") + '</td>' +
+									   '<td><a class="edit" href="#edit_modal" data-toggle="modal" onclick="nodeEdit(this)"><span class="label label-warning">修改</span></a></td>' +
 									   //'<td><a class="delete" href="javascript:;" onclick="nodeDelete(this)">删除</a></td>'+
 									   '</tr>');
 						   }

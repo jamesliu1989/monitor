@@ -143,18 +143,10 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 										<tr>
 											<th>序号</th>											
 											<th>节点编号</th>
-											<s:if test="#session.config.showTempMed == true">
 											<th>介质温度（℃）</th>
-											</s:if>
-											<s:if test="#session.config.showTempEnv == true">
 											<th>环境温度（℃）</th>
-											</s:if>
-											<s:if test="#session.config.showHumidity == true">
 											<th>湿度（%RH）</th>
-											</s:if>
-											<s:if test="#session.config.showSmogAlert == true">
 											<th>烟雾报警</th>
-											</s:if>
 											<th>电池电压（V）</th>
 											<th>工作状态</th>
 											<th>无线信号</th>
@@ -281,15 +273,9 @@ jQuery(document).ready(function() {
 					      '<tr style="color:#666;font-size:12px;background-color: #D4E7F9;">'+
 						      '<td colspan="11"><i class="icon-globe"></i>&nbsp;'+ data[i].areaNo+'&nbsp;('+ data[i].areaDesc +')'+
 						      '&nbsp;&nbsp;&nbsp;节点数：'+ data[i].activeNodeNum+'/'+data[i].nodeNum +
-						  <s:if test="#session.config.showTempMed == true">
 						      '&nbsp;&nbsp;&nbsp;介质温度（最高/最低/平均）：'+ data[i].tempMedMax + '&nbsp/&nbsp' + data[i].tempMedMin + '&nbsp/&nbsp' + data[i].tempMedAvg +'&nbsp;℃ '+
-								  </s:if>
-						  <s:if test="#session.config.showTempEnv == true">
 						      '&nbsp;&nbsp;&nbsp;环境温度（最高/最低/平均）：'+ data[i].tempEnvMax + '&nbsp/&nbsp' + data[i].tempEnvMin + '&nbsp/&nbsp' + data[i].tempEnvAvg +'&nbsp;℃ '+
-								  </s:if>
-						  <s:if test="#session.config.showHumidity == true">
                               '&nbsp;&nbsp;&nbsp;湿度（最高/最低/平均）：'+ data[i].humidityMax + '&nbsp/&nbsp' + data[i].humidityMin + '&nbsp/&nbsp' + data[i].humidityAvg +'&nbsp;%RH'+
-								  </s:if>
 						      '</tr>');
 					   
 					     for(var j = 0; j<nodes.length; j++){
@@ -343,18 +329,10 @@ jQuery(document).ready(function() {
 					         '<tr>'+
 						        '<td>'+(j+1)+'</td>'+						        
 						        '<td>'+ nodes[j].nodeNo +'</td>'+
-							 <s:if test="#session.config.showTempMed == true">
 						        '<td>'+ nodes[j].tempMed +'</td>'+
-							 </s:if>
-							 <s:if test="#session.config.showTempEnv == true">
 						        '<td>'+ nodes[j].tempEnv +'</td>'+
-							 </s:if>
-							 <s:if test="#session.config.showHumidity == true">
                                 '<td>'+ nodes[j].humidity +'</td>'+
-							</s:if>
-							 <s:if test="#session.config.showSmogAlert == true">
 						        '<td><span class="label '+ alertLabel +'"><i class="'+ alertIcon +'"></i>&nbsp;'+ alert +'</span></td>'+
-							</s:if>
 						        '<td>'+ nodes[j].batteryVol +'</td>'+
 						        '<td><span class="label '+ statusLabel +'"><i class="'+ statusIcon +'"></i>&nbsp;&nbsp;'+ status +'</span></td>'+
 						        '<td>'+ nodes[j].wirelessSig +'</td>'+

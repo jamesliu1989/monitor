@@ -120,38 +120,34 @@
             <div class="row-fluid">
                 <div class="span12 form-inline">
                     <div class="controls">
-                        <s:if test="#session.config.showTempMed == true">
                             <label class="checkbox inline">
                                 <input type="checkbox" checked value="" id="tempMed_c"> 介质温度
                             </label>
                             <label class="checkbox inline">
                                 <input type="checkbox" checked value="" id="areaTempMedAvg_c"> 区域介质均温
                             </label>
-                        </s:if>
 
-                        <s:if test="#session.config.showTempEnv == true">
                             <label class="checkbox inline">
                                 <input type="checkbox" checked value="" id="tempEnv_c"> 环境温度
                             </label>
                             <label class="checkbox inline">
                                 <input type="checkbox" checked value="" id="areaTempEnvAvg_c"> 区域环境均温
                             </label>
-                        </s:if>
-
-                        <s:if test="#session.config.showHumidity == true">
                             <label class="checkbox inline">
                                 <input type="checkbox" checked value="" id="humidity_c"> 湿度
                             </label>
                             <label class="checkbox inline">
                                 <input type="checkbox" checked value="" id="areaHumidityAvg_c"> 区域湿度均值
                             </label>
-                        </s:if>
 
                         <label class="checkbox inline">
                             <input type="checkbox" checked value="" id="batteryVol_c"> 电池电压
                         </label>
                         <label class="checkbox inline">
                             <input type="checkbox" checked value="" id="wirelessSig_c"> 无线信号
+                        </label>
+                        <label class="checkbox inline">
+                            <input type="checkbox" checked value="" id="smogAlert_c"> 烟雾报警
                         </label>
                     </div>
                 </div>
@@ -349,6 +345,14 @@
                 chart.series[7].hide();
             }
         });
+        $('#smogAlert_c').click(function () {
+            //如果是选中
+            if (this.checked) {
+                chart.series[8].show();
+            } else {
+                chart.series[8].hide();
+            }
+        });
 
     });
 
@@ -365,15 +369,13 @@
         }
     });
 
-    var seriesOptions = [], names = ['介质温度', '区域介质均温', '环境温度', '区域环境均温', '湿度', '区域湿度均值', '电池电压', '无线信号'];
+    var seriesOptions = [], names = ['介质温度', '区域介质均温', '环境温度', '区域环境均温', '湿度', '区域湿度均值', '电池电压', '无线信号', '烟雾报警'];
     function chartQuery() {
-
 
         var areaNo = $('#areaName_s').val();
         var nodeNo = $('#nodeNo_s').val();
         var startTime = $('#sdate').val();
         var endTime = $('#edate').val();
-
 
         if (nodeNo == -1) {
             alert("请选择正确的节点编号！");
@@ -388,6 +390,7 @@
         var c_tm = $('#tempMed_c').is(':checked');
         var c_te = $('#tempEnv_c').is(':checked');
         var c_hu = $('#humidity_c').is(':checked');
+        var c_sa = $('#smogAlert_c').is(':checked');
         var c_bv = $('#batteryVol_c').is(':checked');
         var c_ws = $('#wirelessSig_c').is(':checked');
         var c_atma = $('#areaTempMedAvg_c').is(':checked');
@@ -401,72 +404,79 @@
             startTime: startTime,
             endTime: endTime
         }, function (data) {
+            if (data) {
+                seriesOptions[0] = {
+                    name: names[0],
+                    yAxis: 0,
+                    data: data.tempMed,
+                    visible: c_tm,
+                };
 
-            seriesOptions[0] = {
-                name: names[0],
-                yAxis: 0,
-                data: data.tempMed,
-                visible: c_tm,
-            };
+                seriesOptions[1] = {
+                    name: names[1],
+                    yAxis: 0,
+                    data: data.areaTempMedAvg,
+                    visible: c_atma
+                };
 
-            seriesOptions[1] = {
-                name: names[1],
-                yAxis: 0,
-                data: data.areaTempMedAvg,
-                visible: c_atma
-            };
+                seriesOptions[2] = {
+                    name: names[2],
+                    yAxis: 0,
+                    data: data.tempEnv,
+                    visible: c_te
+                };
 
-            seriesOptions[2] = {
-                name: names[2],
-                yAxis: 0,
-                data: data.tempEnv,
-                visible: c_te
-            };
+                seriesOptions[3] = {
+                    name: names[3],
+                    yAxis: 0,
+                    data: data.areaTempEnvAvg,
+                    visible: c_atea
+                };
 
-            seriesOptions[3] = {
-                name: names[3],
-                yAxis: 0,
-                data: data.areaTempEnvAvg,
-                visible: c_atea
-            };
+                seriesOptions[4] = {
+                    name: names[4],
+                    yAxis: 3,
+                    data: data.humidity,
+                    visible: c_hu
+                };
 
-            seriesOptions[4] = {
-                name: names[4],
-                yAxis: 3,
-                data: data.humidity,
-                visible: c_hu
-            };
+                seriesOptions[5] = {
+                    name: names[5],
+                    yAxis: 3,
+                    data: data.areaHumidityAvg,
+                    visible: c_ahua
+                };
 
-            seriesOptions[5] = {
-                name: names[5],
-                yAxis: 3,
-                data: data.areaHumidityAvg,
-                visible: c_ahua
-            };
+                seriesOptions[6] = {
+                    name: names[6],
+                    yAxis: 1,
+                    data: data.batteryVol,
+                    visible: c_bv
+                };
 
-            seriesOptions[6] = {
-                name: names[6],
-                yAxis: 1,
-                data: data.batteryVol,
-                visible: c_bv
-            };
+                seriesOptions[7] = {
+                    name: names[7],
+                    yAxis: 2,
+                    data: data.wirelessSig,
+                    visible: c_ws
+                };
 
-            seriesOptions[7] = {
-                name: names[7],
-                yAxis: 2,
-                data: data.wirelessSig,
-                visible: c_ws
-            };
+                seriesOptions[8] = {
+                    name: names[8],
+                    yAxis: 2,
+                    data: data.smogAlert,
+                    visible: c_sa
+                 };
 
-            /* 			seriesOptions[6] = {
-             name: names[6],
-             data: data.smogAlert
-             }; */
+                // As we're loading the data asynchronously, we don't know what order it will arrive. So
+                // we keep a counter and create the chart when all the data is loaded.
+                $('#ajaxLoading').css('display', 'none');   //隐藏loading图片
+                createChart();
+            } else {
+                $('#ajaxLoading').css('display', 'none');   //隐藏loading图片
+                alert("加载出错！");
+            }
 
-            // As we're loading the data asynchronously, we don't know what order it will arrive. So
-            // we keep a counter and create the chart when all the data is loaded.
-            $('#ajaxLoading').css('display', 'none');   //隐藏loading图片
-            createChart();
         });
     }
     // create the chart when all data is loaded

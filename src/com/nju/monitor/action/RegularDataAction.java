@@ -89,11 +89,11 @@ public class RegularDataAction extends ActionSupport implements ServletRequestAw
 				objs8.add(regData.getHumidity());
 				humidityList.add(objs8);
 			}
-/*			//烟雾报警
+			//烟雾报警
 			List<Object> objs3 = new ArrayList<Object>();
 			objs3.add(collectTime);
 			objs3.add(regData.getSmogAlert());
-			smogAlertList.add(objs3);*/
+			smogAlertList.add(objs3);
 			//电池电压
 			List<Object> objs4 = new ArrayList<Object>();
 			objs4.add(collectTime);
@@ -109,7 +109,7 @@ public class RegularDataAction extends ActionSupport implements ServletRequestAw
 		dataMap.put("tempMed", tempMedList);
 		dataMap.put("tempEnv", tempEnvList);
 		dataMap.put("humidity", humidityList);
-		//dataMap.put("smogAlert", smogAlertList);
+		dataMap.put("smogAlert", smogAlertList);
 		dataMap.put("batteryVol", batteryVolList);
 		dataMap.put("wirelessSig", wirelessSigList);
 		
@@ -130,6 +130,7 @@ public class RegularDataAction extends ActionSupport implements ServletRequestAw
 			for (int i = 0; i < regularDatas.size(); i++) {
 				//计算区域曲线各点均值
 				double tempMedSum = 0.0, tempEnvSum = 0.0, humiditySum = 0.0;
+				//有效数量
 				int tmCount = 0, teCount = 0, huCount = 0;
 				for (List<RegularData> areaReg : areaRegList) {
 					if (i < areaReg.size()) {
@@ -156,17 +157,29 @@ public class RegularDataAction extends ActionSupport implements ServletRequestAw
 				long collectTime = regularDatas.get(i).getCollectTime().getTime();
 				List<Object> objs6 = new ArrayList<Object>();
 				objs6.add(collectTime);
-				objs6.add(Double.parseDouble(df.format(tempMedSum/(nodes.size() + tmCount))));
+				if (nodes.size() + tmCount == 0) {
+					objs6.add(0);
+				} else {
+					objs6.add(Double.parseDouble(df.format(tempMedSum/(nodes.size() + tmCount))));
+				}
 				areaTempMedAvgList.add(objs6);
 
 				List<Object> objs7 = new ArrayList<Object>();
 				objs7.add(collectTime);
-				objs7.add(Double.parseDouble(df.format(tempEnvSum/(nodes.size() + teCount))));
+				if (nodes.size() + teCount == 0) {
+					objs7.add(0);
+				}else {
+					objs7.add(Double.parseDouble(df.format(tempEnvSum / (nodes.size() + teCount))));
+				}
 				areaTempEnvAvgList.add(objs7);
 
 				List<Object> objs9 = new ArrayList<Object>();
 				objs9.add(collectTime);
-				objs9.add(Double.parseDouble(df.format(humiditySum/(nodes.size() + huCount))));
+				if (nodes.size() + huCount == 0) {
+					objs9.add(0);
+				} else {
+					objs9.add(Double.parseDouble(df.format(humiditySum / (nodes.size() + huCount))));
+				}
 				areaHumidityAvgList.add(objs9);
 			}
 			dataMap.put("areaTempMedAvg", areaTempMedAvgList);

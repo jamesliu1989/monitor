@@ -229,13 +229,17 @@ public class NodeInfoDAO {
 	
 	public int updateNode(NodeInfo nodeInfo) {
 		try {
-			String queryString = "update NodeInfo set areaNo = ?, nodeName = ?, nodeDesc = ?, status = ? where nodeNo = ?";
+			String queryString = "update NodeInfo set areaNo = ?, nodeName = ?, nodeDesc = ?, status = ?, showTempMed = ?, showTempEnv = ?, showHumidity = ?, showSmogAlert = ? where nodeNo = ?";
 			Query queryObject = sessionFactory.getCurrentSession().createQuery(queryString);
 			queryObject.setString(0, nodeInfo.getAreaNo())
 			           .setString(1, nodeInfo.getNodeName())
 			           .setString(2, nodeInfo.getNodeDesc())
 			           .setInteger(3, nodeInfo.getStatus())
-			           .setString(4, nodeInfo.getNodeNo());
+					   .setBoolean(4, nodeInfo.getShowTempMed())
+					   .setBoolean(5, nodeInfo.getShowTempEnv())
+					   .setBoolean(6, nodeInfo.getShowHumidity())
+					   .setBoolean(7, nodeInfo.getShowSmogAlert())
+			           .setString(8, nodeInfo.getNodeNo());
 			           
 			return queryObject.executeUpdate();
 		} catch (RuntimeException re) {

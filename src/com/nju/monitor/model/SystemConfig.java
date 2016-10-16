@@ -28,10 +28,6 @@ public class SystemConfig implements java.io.Serializable {
 	private Double collectCycle;
 	private String smsComPort;
 	private String smsBaudRate;
-	private Boolean showTempMed;
-	private Boolean showTempEnv;
-	private Boolean showHumidity;
-	private Boolean showSmogAlert;
 	private Boolean smsAlert;
 
 
@@ -103,42 +99,6 @@ public class SystemConfig implements java.io.Serializable {
 	
 	public void setSmsBaudRate(String smsBaudRate) {
 		this.smsBaudRate = smsBaudRate;
-	}
-
-	@Column(name = "SHOW_TEMP_MED")
-	public Boolean getShowTempMed() {
-		return showTempMed;
-	}
-
-	public void setShowTempMed(Boolean showTempMed) {
-		this.showTempMed = showTempMed;
-	}
-
-	@Column(name = "SHOW_TEMP_ENV")
-	public Boolean getShowTempEnv() {
-		return showTempEnv;
-	}
-
-	@Column(name = "SHOW_HUMIDITY")
-	public Boolean getShowHumidity() {
-		return showHumidity;
-	}
-
-	public void setShowHumidity(Boolean showHumidity) {
-		this.showHumidity = showHumidity;
-	}
-
-	public void setShowTempEnv(Boolean showTempEnv) {
-		this.showTempEnv = showTempEnv;
-	}
-
-	@Column(name = "SHOW_SMOG_ALERT")
-	public Boolean getShowSmogAlert() {
-		return showSmogAlert;
-	}
-
-	public void setShowSmogAlert(Boolean showSmogAlert) {
-		this.showSmogAlert = showSmogAlert;
 	}
 
 	@Column(name = "SMS_ALERT")

@@ -131,24 +131,19 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 											<th rowspan="2">序号</th>
 											<th rowspan="2">区域名称</th>
 											<th rowspan="2">节点数量</th>
-											<s:if test="#session.config.showTempMed == true">
+
 											<th colspan="7">介质（℃）</th>
-											</s:if>
-											<s:if test="#session.config.showTempEnv == true">
+
 											<th colspan="7">环境（℃）</th>
-											</s:if>
-											<s:if test="#session.config.showHumidity == true">
+
                                             <th colspan="3">湿度（%RH）</th>
-											</s:if>
-											<s:if test="#session.config.showTempMed == true && #session.config.showTempEnv == true">
+
 											<th colspan="3">节点（℃）</th>
-											</s:if>
-											<s:if test="#session.config.showSmogAlert == true">
+
 											<th rowspan="2">烟雾报警</th>
-											</s:if>
+
 										</tr>
 										<tr>
-											<s:if test="#session.config.showTempMed == true">
 											<th>最高温度</th>
 											<th>最低温度</th>
 											<th>平均温度</th>
@@ -157,8 +152,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 											<th>最高温升</th>
 											<th>最低温升</th>
 											<th>平均温升</th>
-											</s:if>
-											<s:if test="#session.config.showTempEnv == true">
+
 											<th>最高温度</th>
 											<th>最低温度</th>
 											<th>平均温度</th>
@@ -167,17 +161,15 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 											<th>最高温升</th>
 											<th>最低温升</th>
 											<th>平均温升</th>
-                                            </s:if>
-											<s:if test="#session.config.showHumidity == true">
+
                                             <th>最大湿度</th>
                                             <th>最小湿度</th>
                                             <th>平均湿度</th>
-											</s:if>
-											<s:if test="#session.config.showTempMed == true && #session.config.showTempEnv == true">
+
 											<th>最高温差</th>
 											<th>最低温差</th>
 											<th>平均温差</th>
-											</s:if>
+
 										</tr>
 									</thead>
 									<tbody>
@@ -278,7 +270,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 					          '<td>'+ (i+1) +'</td>'+
 						      '<td>'+ data[i].areaName +'</td>'+
 						      '<td>'+ data[i].activeNodeNum+'/'+data[i].nodeNum +'</td>'+
-						  <s:if test="#session.config.showTempMed == true">
+
 						      '<td>'+ data[i].tempMedMax +'</td>'+
 						      '<td>'+ data[i].tempMedMin +'</td>'+
 						      '<td>'+ data[i].tempMedAvg +'</td>'+
@@ -287,8 +279,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 						      '<td>'+ data[i].deltaMedMax +'</td>'+
 						      '<td>'+ data[i].deltaMedMin +'</td>'+
 						      '<td>'+ data[i].deltaMedAvg +'</td>'+
-						    </s:if>
-						  <s:if test="#session.config.showTempEnv == true">
+
 						      '<td>'+ data[i].tempEnvMax +'</td>'+
 						      '<td>'+ data[i].tempEnvMin +'</td>'+						      
 						      '<td>'+ data[i].tempEnvAvg +'</td>'+
@@ -297,20 +288,17 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 						      '<td>'+ data[i].deltaEnvMax +'</td>'+
 						      '<td>'+ data[i].deltaEnvMin +'</td>'+
 						      '<td>'+ data[i].deltaEnvAvg +'</td>'+
-						  </s:if>
-						  <s:if test="#session.config.showHumidity == true">
+
                               '<td>'+ data[i].humidityMax +'</td>'+
                               '<td>'+ data[i].humidityMin +'</td>'+
                               '<td>'+ data[i].humidityAvg +'</td>'+
-                          </s:if>
-						  <s:if test="#session.config.showTempMed == true && #session.config.showTempEnv == true">
+
 						      '<td>'+ data[i].tempDevMax +'</td>'+
 						      '<td>'+ data[i].tempDevMin +'</td>'+						      
 						      '<td>'+ data[i].tempDevAvg +'</td>'+
-							</s:if>
-						  <s:if test="#session.config.showSmogAlert == true">
+
 						      '<td><span class="label '+ alertLabel +'"><i class="'+ alertIcon +'"></i>&nbsp;'+ alert +'</span></td>'+
-						  </s:if>
+
 					      '</tr>');					  
 				   }
 			    }
